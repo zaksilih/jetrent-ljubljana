@@ -1,0 +1,6 @@
+export { Hero } from './Hero'
+export { Benefits } from './Benefits'
+export { HowItWorks } from './HowItWorks'
+export { PricingPreview } from './PricingPreview'
+export { FAQPreview } from './FAQPreview'
+export { ContactCTA } from './ContactCTA'
