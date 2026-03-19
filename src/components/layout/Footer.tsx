@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Waves, Mail, Phone, MapPin, Instagram, Facebook } from 'lucide-react'
+import Image from 'next/image'
+import { Mail, Phone, MapPin, Instagram, Facebook } from 'lucide-react'
 import { footerNavigation } from '@/data/navigation'
 import { businessInfo } from '@/data/business'
 
@@ -17,7 +18,7 @@ export function Footer() {
               href="/" 
               className="flex items-center gap-2 font-bold text-xl text-white hover:text-primary-400 transition-colors"
             >
-              <Waves className="h-7 w-7 text-primary-400" />
+              <Image src="/logo.png" alt={businessInfo.name} width={44} height={44} className="h-11 w-11 object-contain" />
               <span>{businessInfo.name}</span>
             </Link>
             <p className="mt-4 text-sm text-gray-400 leading-relaxed">

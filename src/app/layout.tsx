@@ -1,8 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
+import { SiteShell } from '@/components/layout/SiteShell'
 import { businessInfo } from '@/data/business'
 
 const inter = Inter({ 
@@ -20,7 +19,7 @@ export const metadata: Metadata = {
   keywords: businessInfo.seo.keywords,
   authors: [{ name: businessInfo.name }],
   creator: businessInfo.name,
-  metadataBase: new URL('https://jetrent-ljubljana.si'),
+  metadataBase: new URL('https://jet4you.si'),
   openGraph: {
     type: 'website',
     locale: 'sl_SI',
@@ -45,13 +44,9 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="sl" className={inter.variable}>
+    <html lang="sl" className={inter.variable} suppressHydrationWarning>
       <body className={`${inter.className} flex min-h-screen flex-col`}>
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <SiteShell>{children}</SiteShell>
       </body>
     </html>
   )

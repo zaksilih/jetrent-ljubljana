@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Menu, X, Waves } from 'lucide-react'
+import Image from 'next/image'
+import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { mainNavigation } from '@/data/navigation'
 import { businessInfo } from '@/data/business'
@@ -13,6 +14,9 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
+
+  // Pages with dark hero that need light header text when not scrolled
+  const isDarkHero = pathname === '/'
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,6 +30,9 @@ export function Header() {
   useEffect(() => {
     setMobileMenuOpen(false)
   }, [pathname])
+
+  // When on a dark hero page and not scrolled, use light colors
+  const isLight = isDarkHero && !scrolled
 
   return (
     <header
@@ -41,11 +48,16 @@ export function Header() {
           {/* Logo */}
           <Link 
             href="/" 
-            className="flex items-center gap-2 font-bold text-xl text-primary-600 hover:text-primary-700 transition-colors"
+            className={cn(
+              'flex items-center gap-2 font-bold text-xl transition-colors',
+              isLight
+                ? 'text-white hover:text-primary-200'
+                : 'text-primary-600 hover:text-primary-700'
+            )}
           >
-            <Waves className="h-7 w-7" />
+            <Image src="/logo.png" alt={businessInfo.name} width={44} height={44} className="h-11 w-11 object-contain" />
             <span className="hidden sm:inline">{businessInfo.name}</span>
-            <span className="sm:hidden">JetRent</span>
+            <span className="sm:hidden">Jet4You</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -55,10 +67,14 @@ export function Header() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'text-sm font-medium transition-colors hover:text-primary-600',
-                  pathname === item.href
-                    ? 'text-primary-600'
-                    : 'text-gray-700'
+                  'text-sm font-medium uppercase tracking-wide transition-colors',
+                  isLight
+                    ? pathname === item.href
+                      ? 'text-white'
+                      : 'text-primary-200 hover:text-white'
+                    : pathname === item.href
+                      ? 'text-primary-600'
+                      : 'text-gray-700 hover:text-primary-600'
                 )}
               >
                 {item.title}
@@ -69,14 +85,19 @@ export function Header() {
           {/* Desktop CTA */}
           <div className="hidden lg:flex lg:items-center lg:gap-4">
             <Button asChild variant="cta">
-              <Link href="/kontakt">Povpraševanje</Link>
+              <Link href="/rezervacija">Rezervacija</Link>
             </Button>
           </div>
 
           {/* Mobile Menu Button */}
           <button
             type="button"
-            className="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-gray-700 hover:text-primary-600 hover:bg-gray-100 transition-colors"
+            className={cn(
+              'lg:hidden inline-flex items-center justify-center p-2 rounded-lg transition-colors',
+              isLight
+                ? 'text-white hover:text-primary-200 hover:bg-white/10'
+                : 'text-gray-700 hover:text-primary-600 hover:bg-gray-100'
+            )}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-expanded={mobileMenuOpen}
             aria-label="Toggle menu"
@@ -96,16 +117,23 @@ export function Header() {
             mobileMenuOpen ? 'max-h-96 pb-6' : 'max-h-0'
           )}
         >
-          <div className="flex flex-col gap-2 pt-4 border-t border-gray-100">
+          <div className={cn(
+            'flex flex-col gap-2 pt-4 border-t',
+            isLight ? 'border-white/10' : 'border-gray-100'
+          )}>
             {mainNavigation.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  'px-4 py-3 rounded-lg text-base font-medium transition-colors',
-                  pathname === item.href
-                    ? 'bg-primary-50 text-primary-600'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600'
+                  'px-4 py-3 rounded-lg text-base font-medium uppercase tracking-wide transition-colors',
+                  isLight
+                    ? pathname === item.href
+                      ? 'bg-white/10 text-white'
+                      : 'text-primary-200 hover:bg-white/10 hover:text-white'
+                    : pathname === item.href
+                      ? 'bg-primary-50 text-primary-600'
+                      : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600'
                 )}
               >
                 {item.title}
@@ -113,7 +141,7 @@ export function Header() {
             ))}
             <div className="px-4 pt-2">
               <Button asChild variant="cta" className="w-full">
-                <Link href="/kontakt">Pošlji povpraševanje</Link>
+                <Link href="/rezervacija">Rezervacija</Link>
               </Button>
             </div>
           </div>

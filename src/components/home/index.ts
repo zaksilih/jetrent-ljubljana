@@ -1,4 +1,5 @@
 export { Hero } from './Hero'
+export { SocialProof } from './SocialProof'
 export { Benefits } from './Benefits'
 export { HowItWorks } from './HowItWorks'
 export { PricingPreview } from './PricingPreview'

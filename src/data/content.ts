@@ -1,78 +1,169 @@
 // Page content in Slovenian - centralized for easy editing
 export const homeContent = {
   hero: {
-    title: 'Jet ski za vaš dopust na Hrvaškem',
-    subtitle: 'Najemite Sea-Doo Spark s prikolico v Ljubljani in uživajte v popolni svobodi na morju. Idealno za tedenski ali dvotedenski najem.',
-    primaryCTA: 'Pošlji povpraševanje',
+    title: 'Vaše poletje.',
+    titleAccent: 'Vaš jet ski.',
+    subtitle: 'Prevzemite Sea-Doo Spark s prikolico v Ljubljani — jutri ste že na hrvaškem morju. Brez čakanja, brez birokratskih zapletov.',
+    primaryCTA: 'Rezerviraj termin',
     secondaryCTA: 'Poglej cenik',
-    badge: 'Rezerviraj pravočasno za poletno sezono',
+    badge: 'Poletje 2026 — termini se polnijo',
+    trustItems: [
+      'Sea-Doo Spark 2UP',
+      'Prikolica vključena',
+      'Prevzem v Ljubljani',
+      'Dokumenti za HR urejeni',
+    ],
   },
-  
+
+  socialProof: {
+    stat1: { value: '60+', label: 'uspešnih najemov' },
+    stat2: { value: '4.9', label: 'ocena strank' },
+    stat3: { value: '24h', label: 'odzivni čas' },
+  },
+
   benefits: {
-    title: 'Zakaj najem pri nas?',
-    subtitle: 'Enostavno, ugodno in brez skrbi',
+    label: 'Zakaj JetRent',
+    title: 'Vse kar potrebujete je avtomobil s kljuko',
+    subtitle: 'Mi poskrbimo za vse ostalo — od prikolice do dokumentacije za Hrvaško.',
     items: [
       {
         title: 'Prevzem v Ljubljani',
-        description: 'Brez dolgih poti – jet ski prevzamete v okolici Ljubljane in se takoj odpravite na pot.',
+        description: 'Dogovorimo se za lokacijo in uro. Brez poti na obalo samo za prevzem — jet ski vas čaka doma.',
         icon: 'MapPin',
       },
       {
-        title: 'Prikolica vključena',
-        description: 'Vse kar potrebujete je vozilo s kljuko. Prikolico dobite skupaj z jet skijem.',
+        title: 'Prikolica v ceni',
+        description: 'Registrirana prikolica je vedno vključena. Pripnete, odpeljete, vrnete. Tako preprosto.',
         icon: 'Truck',
       },
       {
-        title: 'Idealno za Hrvaško',
-        description: 'Večina naših strank jet ski uporablja na hrvaškem morju. Dokumentacija je urejena.',
-        icon: 'Waves',
+        title: 'Urejeno za Hrvaško',
+        description: 'Celotna dokumentacija, registracija in navodila za hrvaške predpise — brez vaše skrbi.',
+        icon: 'FileCheck',
       },
       {
-        title: 'Ugodnejše za tedenski najem',
-        description: 'Daljši najem pomeni nižjo dnevno ceno. Že od 60 €/dan v nizki sezoni.',
-        icon: 'Percent',
+        title: 'Tedenski najem, nižja cena',
+        description: 'Že od 60 €/dan v nizki sezoni. Daljši najem = boljša cena. Vikend paketi ob razpoložljivosti.',
+        icon: 'TrendingDown',
+      },
+      {
+        title: 'Enostavno za začetnike',
+        description: 'Sea-Doo Spark je zasnovan za intuitivno vožnjo. Ob prevzemu prejmete podrobna navodila.',
+        icon: 'Zap',
+      },
+      {
+        title: 'Brez skritih stroškov',
+        description: 'Cena vključuje prikolico, dokumentacijo in navodila. Gorivo in kavcija 500 € ob prevzemu.',
+        icon: 'ShieldCheck',
       },
     ],
   },
-  
+
   howItWorks: {
-    title: 'Kako poteka najem?',
-    subtitle: 'V treh preprostih korakih do nepozabnih trenutkov',
+    label: 'Kako deluje',
+    title: 'Od povpraševanja do morja v 3 korakih',
+    subtitle: 'Postopek je zasnovan tako, da ste na dopustu čim hitreje.',
     steps: [
       {
         step: 1,
-        title: 'Pošljite povpraševanje',
-        description: 'Izpolnite obrazec ali nas pokličite. Sporočite želeni termin in destinacijo.',
+        title: 'Pošljete povpraševanje',
+        description: 'Izberite termin in nam sporočite destinacijo. Odgovorimo v roku 24 ur.',
       },
       {
         step: 2,
-        title: 'Potrditev in dogovor',
-        description: 'Potrdimo razpoložljivost, se dogovorimo za prevzem in vam pošljemo vse potrebne informacije.',
+        title: 'Potrdimo & se dogovorimo',
+        description: 'Preverimo razpoložljivost, se dogovorimo za lokacijo prevzema in vam pošljemo vse podrobnosti.',
       },
       {
         step: 3,
-        title: 'Prevzem in uživanje',
-        description: 'Na dogovorjeni lokaciji prevzamete jet ski s prikolico, prejmete navodila in ste pripravljeni za akcijo!',
+        title: 'Prevzamete & uživate',
+        description: 'Podpišete pogodbo, prejmete navodila in ste na poti. Jet ski vrnete na isto lokacijo.',
       },
     ],
   },
-  
+
   pricingPreview: {
-    title: 'Naše cene',
-    subtitle: 'Pregledne cene brez skritih stroškov',
-    ctaText: 'Ogled celotnega cenika',
+    label: 'Cenik',
+    title: 'Transparentne cene, brez presenečenj',
+    subtitle: 'Izberite paket, ki ustreza vašemu dopustu. Prikolica in dokumentacija sta vedno vključeni.',
+    ctaText: 'Celoten cenik in podrobnosti',
   },
-  
+
   faqPreview: {
-    title: 'Pogosta vprašanja',
-    subtitle: 'Odgovori na najpogostejša vprašanja',
-    ctaText: 'Vsa vprašanja',
+    label: 'Pogosta vprašanja',
+    title: 'Imate vprašanje? Verjetno imamo odgovor.',
+    subtitle: 'Najpogostejša vprašanja naših strank pred prvim najemom.',
+    ctaText: 'Vsa vprašanja in odgovori',
   },
-  
+
   contactCTA: {
-    title: 'Pripravljeni na avanturo?',
-    subtitle: 'Pošljite povpraševanje in rezervirajte svoj termin še danes.',
-    ctaText: 'Pošlji povpraševanje',
+    title: 'Vaš termin čaka',
+    subtitle: 'Priljubljeni datumi se hitro zapolnijo. Pošljite povpraševanje brez obveznosti — odgovorimo v 24 urah.',
+    ctaText: 'Rezerviraj termin',
+    secondaryCTA: 'Pokliči nas',
+    urgencyNote: 'Brezplačno povpraševanje • Brez obveznosti • Odziv v 24h',
+  },
+}
+
+export const jetSkiContent = {
+  hero: {
+    title: 'Sea-Doo Spark 2UP 90HP',
+    subtitle: 'Kompakten, hiter in izjemno zabaven. Idealen spremljevalec za vaš dopust na morju.',
+    badge: 'Naš jet ski',
+  },
+
+  intro: {
+    title: 'Zakaj Sea-Doo Spark?',
+    description: 'Sea-Doo Spark je eden najbolj priljubljenih osebnih plovil na svetu — in to z razlogom. Zasnovan je za enostavno upravljanje, minimalno vzdrževanje in maksimalno zabavo. Njegova lahka konstrukcija iz materiala Polytec™ ga naredi izjemno okretnega, ekonomičen Rotax 900 ACE motor pa poskrbi za dovolj moči brez pretirane porabe goriva.',
+  },
+
+  highlights: [
+    {
+      title: 'Lahek in okreten',
+      description: 'Z le 185 kg suhe teže je Spark eden najlažjih jet skijev na trgu. Enostavno ga naložite in odpeljete.',
+      icon: 'Feather',
+    },
+    {
+      title: '90 KM moči',
+      description: 'Rotax 900 ACE motor zagotavlja do 80 km/h na vodi — dovolj za adrenalinski užitek.',
+      icon: 'Gauge',
+    },
+    {
+      title: 'Ekonomična poraba',
+      description: 'Le 8–12 litrov goriva na uro pri intenzivni vožnji. 30-litrski rezervoar za daljše izlete.',
+      icon: 'Fuel',
+    },
+    {
+      title: 'Primeren za začetnike',
+      description: 'Intuitivno upravljanje in IBR (Intelligent Brake & Reverse) sistem za varno in enostavno vožnjo.',
+      icon: 'ThumbsUp',
+    },
+    {
+      title: 'Za 1–2 osebi',
+      description: 'Udoben sedež za voznika in sopotnika. Popoln za pare ali solo pustolovščine.',
+      icon: 'Users',
+    },
+    {
+      title: 'Prikolica vključena',
+      description: 'Registrirana prikolica je del paketa. Pripnete in odpeljete — brez dodatnih stroškov.',
+      icon: 'Truck',
+    },
+  ],
+
+  specs: {
+    title: 'Tehnične specifikacije',
+    subtitle: 'Vse podrobnosti o našem Sea-Doo Spark 2UP 90HP (letnik 2016)',
+  },
+
+  gallery: {
+    title: 'Galerija',
+    subtitle: 'Oglejte si naš jet ski iz vseh zornih kotov',
+  },
+
+  cta: {
+    title: 'Želite ta jet ski na vašem dopustu?',
+    subtitle: 'Pošljite povpraševanje in ga rezervirajte za svoj termin.',
+    ctaText: 'Rezerviraj termin',
   },
 }
 

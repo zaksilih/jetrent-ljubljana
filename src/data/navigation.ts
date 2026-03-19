@@ -11,6 +11,11 @@ export const mainNavigation: NavItem[] = [
     href: '/',
   },
   {
+    title: 'Jet ski',
+    href: '/jet-ski',
+    description: 'Spoznajte naš Sea-Doo Spark',
+  },
+  {
     title: 'Cenik',
     href: '/cenik',
     description: 'Pregled cen in paketov',
@@ -35,7 +40,9 @@ export const mainNavigation: NavItem[] = [
 export const footerNavigation = {
   main: [
     { title: 'Domov', href: '/' },
+    { title: 'Jet ski', href: '/jet-ski' },
     { title: 'Cenik', href: '/cenik' },
+    { title: 'Rezervacija', href: '/rezervacija' },
     { title: 'Kako deluje', href: '/kako-deluje' },
     { title: 'Pogosta vprašanja', href: '/vprasanja' },
     { title: 'Kontakt', href: '/kontakt' },

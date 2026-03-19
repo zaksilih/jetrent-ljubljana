@@ -8,72 +8,74 @@ export function Hero() {
   const { hero } = homeContent
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-primary-50 via-white to-blue-50">
-      {/* Background pattern */}
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNiIgc3Ryb2tlPSIjMDZhY2Q2IiBzdHJva2Utb3BhY2l0eT0iLjA1IiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PC9zdmc+')] opacity-50" />
-      
+    <section className="relative min-h-screen overflow-hidden text-white">
+      {/* Background video */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        poster=""
+      >
+        <source src="/video/hero_video.mp4" type="video/mp4" />
+      </video>
+
+      {/* Dark overlay for text readability */}
+      <div className="absolute inset-0 bg-gradient-to-b from-primary-950/80 via-primary-950/60 to-primary-950/80" />
+
+      {/* Content */}
       <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="page-padding-top pb-16 lg:pb-24">
+        <div className="page-padding-top pb-20 lg:pb-28 min-h-screen flex flex-col justify-center">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
-            {/* Badge */}
-            <Badge variant="secondary" className="mb-6 px-4 py-2">
-              <Sparkles className="w-4 h-4 mr-2" />
+            {/* Urgency badge */}
+            <Badge variant="outline" className="mb-8 px-4 py-2 border-secondary-400/40 text-secondary-300 bg-secondary-400/10 backdrop-blur-sm">
+              <Sparkles className="w-4 h-4 mr-2 text-secondary-400" />
               {hero.badge}
             </Badge>
 
-            {/* Main Heading */}
-            <h1 className="heading-1 text-gray-900 mb-6">
-              <span className="gradient-text">{hero.title}</span>
+            {/* Main Heading — split line for drama */}
+            <h1 className="heading-1 mb-6 leading-[1.1]">
+              <span className="text-white drop-shadow-lg">{hero.title}</span>
+              <br />
+              <span className="bg-gradient-to-r from-secondary-300 via-secondary-400 to-secondary-300 bg-clip-text text-transparent drop-shadow-lg">
+                {hero.titleAccent}
+              </span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-lg sm:text-xl text-gray-600 mb-10 max-w-2xl leading-relaxed text-balance">
+            <p className="text-lg sm:text-xl text-white/80 mb-10 max-w-2xl leading-relaxed text-balance drop-shadow-sm">
               {hero.subtitle}
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-              <Button asChild variant="cta" size="xl">
+              <Button asChild variant="cta" size="xl" className="shadow-xl shadow-primary-500/25">
                 <Link href="/kontakt" className="gap-2">
                   {hero.primaryCTA}
                   <ArrowRight className="w-5 h-5" />
                 </Link>
               </Button>
-              <Button asChild variant="secondary" size="xl">
+              <Button
+                asChild
+                size="xl"
+                className="border-2 border-white/20 bg-white/5 text-white hover:bg-white/10 backdrop-blur-sm"
+              >
                 <Link href="/cenik">
                   {hero.secondaryCTA}
                 </Link>
               </Button>
             </div>
 
-            {/* Trust indicator */}
-            <p className="mt-10 text-sm text-gray-500">
-              Sea-Doo Spark 2UP • Prikolica vključena • Prevzem Ljubljana
-            </p>
-          </div>
-
-          {/* Hero Image Placeholder */}
-          <div className="mt-12 lg:mt-16 relative">
-            <div className="aspect-[16/9] lg:aspect-[21/9] bg-gradient-to-br from-primary-100 to-primary-200 rounded-2xl lg:rounded-3xl shadow-2xl overflow-hidden flex items-center justify-center">
-              {/* Placeholder for hero image */}
-              <div className="text-center p-8">
-                <div className="w-20 h-20 mx-auto mb-4 bg-primary-300/50 rounded-full flex items-center justify-center">
-                  <svg className="w-10 h-10 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <p className="text-primary-700 font-medium">
-                  Dodajte sliko Sea-Doo Spark jet skija
-                </p>
-                <p className="text-primary-600/70 text-sm mt-1">
-                  Priporočena velikost: 1920 x 800 px
-                </p>
-              </div>
+            {/* Trust indicators */}
+            <div className="mt-12 flex flex-wrap justify-center gap-x-6 gap-y-3">
+              {hero.trustItems.map((item, i) => (
+                <span key={i} className="flex items-center gap-2 text-sm text-white/70">
+                  <span className="w-1.5 h-1.5 rounded-full bg-secondary-400" />
+                  {item}
+                </span>
+              ))}
             </div>
-            
-            {/* Decorative elements */}
-            <div className="absolute -bottom-4 -right-4 w-24 h-24 bg-primary-400/20 rounded-full blur-2xl" />
-            <div className="absolute -top-4 -left-4 w-32 h-32 bg-blue-400/20 rounded-full blur-2xl" />
           </div>
         </div>
       </div>

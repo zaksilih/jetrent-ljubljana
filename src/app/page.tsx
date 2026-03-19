@@ -1,5 +1,6 @@
 import {
   Hero,
+  SocialProof,
   Benefits,
   HowItWorks,
   PricingPreview,
@@ -11,6 +12,7 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <SocialProof />
       <Benefits />
       <HowItWorks />
       <PricingPreview />
