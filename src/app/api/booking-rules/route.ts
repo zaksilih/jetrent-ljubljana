@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
 import { defaultBookingRules, type BookingRules } from '@/lib/booking'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/booking-rules
  *

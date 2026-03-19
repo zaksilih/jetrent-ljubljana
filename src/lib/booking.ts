@@ -42,14 +42,21 @@ export function validateBookingDates(
   rules: BookingRules
 ): string | null {
   const numDays = differenceInDays(end, start)
+
+  // Same day = 1-day booking (start and end are the same date)
+  if (numDays === 0) {
+    if (rules.singleDayEnabled) return null
+    return 'Enodnevne rezervacije trenutno niso na voljo.'
+  }
+
   if (numDays < 1) return 'Izberite vsaj 1 dan.'
 
   const startDay = getDay(start) // 0=Sun, 6=Sat
 
-  // Single day exception
+  // Single day via range (start + 1 day end)
   if (numDays === 1) {
     if (rules.singleDayEnabled) return null
-    return 'Enodnevne rezervacije trenutno niso na voljo.'
+    // Could still be valid as a weekend or meet minDays
   }
 
   // Weekend exception — shorter stays allowed on certain days

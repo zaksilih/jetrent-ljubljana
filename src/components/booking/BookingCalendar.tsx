@@ -121,19 +121,24 @@ export default function BookingCalendar({ onSelect, initialRange }: BookingCalen
 
   // Check if selected range has overlap
   const rangeHasConflict =
-    range?.from && range?.to
+    range?.from && range?.to && range.from.getTime() !== range.to.getTime()
       ? allUnavailable.some((d) =>
           isWithinInterval(d, { start: range.from!, end: new Date(range.to!.getTime() - 86400000) })
         )
       : false
 
   // Validate against booking rules
+  // Handle same-day selection (from === to) as a single-day booking
+  const effectiveEnd = range?.from && range?.to && range.from.getTime() === range.to.getTime()
+    ? range.to  // same day = 1-day booking, pass same date to validator
+    : range?.to
+
   const ruleError =
-    range?.from && range?.to
-      ? validateBookingDates(range.from, range.to, bookingRules)
+    range?.from && effectiveEnd
+      ? validateBookingDates(range.from, effectiveEnd, bookingRules)
       : null
 
-  const canProceed = range?.from && range?.to && !rangeHasConflict && !ruleError
+  const canProceed = range?.from && effectiveEnd && !rangeHasConflict && !ruleError
 
   // Build a helper message showing allowed booking types
   const rulesHint = (() => {
@@ -259,8 +264,8 @@ export default function BookingCalendar({ onSelect, initialRange }: BookingCalen
           size="lg"
           disabled={!canProceed}
           onClick={() => {
-            if (range?.from && range?.to) {
-              onSelect({ start: range.from, end: range.to })
+            if (range?.from && effectiveEnd) {
+              onSelect({ start: range.from, end: effectiveEnd })
             }
           }}
         >
