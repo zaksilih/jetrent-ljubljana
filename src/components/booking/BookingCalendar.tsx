@@ -10,8 +10,6 @@ import {
   eachDayOfInterval,
   parseISO,
   isWithinInterval,
-  differenceInDays,
-  getDay,
 } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -138,28 +136,36 @@ export default function BookingCalendar({ onSelect, initialRange }: BookingCalen
   const canProceed = range?.from && range?.to && !rangeHasConflict && !ruleError
 
   // Build a helper message showing allowed booking types
-  const rulesHint = bookingRules.enforceWeekly
-    ? (() => {
-        const parts: string[] = []
-        const dayName: Record<number, string> = {
-          0: 'nedelje', 1: 'ponedeljka', 2: 'torka', 3: 'srede',
-          4: 'četrtka', 5: 'petka', 6: 'sobote',
-        }
-        const weekDesc = bookingRules.allowedWeekMultiples
-          .map((w) => `${w * 7} dni`)
-          .join(', ')
-        parts.push(`Tedenski: od ${dayName[bookingRules.requiredStartDay]} do ${dayName[bookingRules.requiredStartDay]} (${weekDesc})`)
-        if (bookingRules.weekendEnabled) {
-          const starts = bookingRules.weekendStartDays.map((d) => dayName[d]).join('/')
-          const durs = bookingRules.weekendDurations.join('–')
-          parts.push(`Vikend: ${durs} dni (začetek ${starts})`)
-        }
-        if (bookingRules.singleDayEnabled) {
-          parts.push('Enodnevni: 1 dan')
-        }
-        return parts.join(' · ')
-      })()
-    : null
+  const rulesHint = (() => {
+    const parts: string[] = []
+    const dayName: Record<number, string> = {
+      0: 'nedelje', 1: 'ponedeljka', 2: 'torka', 3: 'srede',
+      4: 'četrtka', 5: 'petka', 6: 'sobote',
+    }
+
+    // Main rule: minimum days
+    if (bookingRules.minDays > 1) {
+      let main = `Minimalno ${bookingRules.minDays} dni`
+      if (bookingRules.requiredStartDay !== null) {
+        main += ` (začetek: ${dayName[bookingRules.requiredStartDay]})`
+      }
+      parts.push(main)
+    }
+
+    // Weekend exception
+    if (bookingRules.weekendEnabled) {
+      const starts = bookingRules.weekendStartDays.map((d) => dayName[d]).join('/')
+      const durs = bookingRules.weekendDurations.join('–')
+      parts.push(`Vikend: ${durs} dni (začetek ${starts})`)
+    }
+
+    // Single day
+    if (bookingRules.singleDayEnabled) {
+      parts.push('Enodnevni: 1 dan')
+    }
+
+    return parts.length > 0 ? parts.join(' · ') : null
+  })()
 
   return (
     <div className="space-y-6">

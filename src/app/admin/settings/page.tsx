@@ -3,14 +3,12 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Loader2, Save, Settings, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { cn } from '@/lib/utils'
 
 interface BookingRules {
-  enforceWeekly: boolean
-  requiredStartDay: number
-  allowedWeekMultiples: number[]
+  minDays: number
+  requiredStartDay: number | null
   weekendEnabled: boolean
   weekendStartDays: number[]
   weekendDurations: number[]
@@ -114,77 +112,77 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Enforce weekly */}
-      <Section title="Tedenske rezervacije" icon={Settings}>
-        <ToggleRow
-          label="Zahtevaj tedensko rezervacijo (sobota–sobota)"
-          description="Če je vklopljeno, stranke lahko rezervirajo samo od sobote do sobote v celih tednih."
-          checked={rules.enforceWeekly}
-          onChange={(v) => setRules({ ...rules, enforceWeekly: v })}
-        />
-
-        {rules.enforceWeekly && (
-          <>
-            <div className="space-y-2 mt-4">
-              <Label className="text-xs text-gray-500 uppercase tracking-wide">
-                Obvezen začetni dan
-              </Label>
-              <div className="flex flex-wrap gap-2">
-                {[0, 1, 2, 3, 4, 5, 6].map((d) => (
-                  <button
-                    key={d}
-                    className={cn(
-                      'px-3 py-1.5 rounded-full text-xs font-medium border transition-colors',
-                      rules.requiredStartDay === d
-                        ? 'bg-primary-600 text-white border-primary-600'
-                        : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
-                    )}
-                    onClick={() => setRules({ ...rules, requiredStartDay: d })}
-                  >
-                    {dayLabels[d]}
-                  </button>
-                ))}
-              </div>
+      {/* Minimum days + required start day */}
+      <Section title="Dolgotrajni najem" icon={Settings}>
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <Label className="text-xs text-gray-500 uppercase tracking-wide">
+              Minimalno število dni
+            </Label>
+            <p className="text-xs text-gray-400">
+              Stranke morajo rezervirati vsaj toliko dni. Vikend in enodnevni najem sta izjemi (spodaj).
+            </p>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {[1, 2, 3, 4, 5, 6, 7, 10, 14].map((d) => (
+                <button
+                  key={d}
+                  className={cn(
+                    'px-3 py-1.5 rounded-full text-xs font-medium border transition-colors',
+                    rules.minDays === d
+                      ? 'bg-primary-600 text-white border-primary-600'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+                  )}
+                  onClick={() => setRules({ ...rules, minDays: d })}
+                >
+                  {d} {d === 1 ? 'dan' : 'dni'}
+                </button>
+              ))}
             </div>
+          </div>
 
-            <div className="space-y-2 mt-4">
-              <Label className="text-xs text-gray-500 uppercase tracking-wide">
-                Dovoljeno število tednov
-              </Label>
-              <div className="flex flex-wrap gap-2">
-                {[1, 2, 3, 4].map((w) => (
-                  <button
-                    key={w}
-                    className={cn(
-                      'px-3 py-1.5 rounded-full text-xs font-medium border transition-colors',
-                      rules.allowedWeekMultiples.includes(w)
-                        ? 'bg-primary-600 text-white border-primary-600'
-                        : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
-                    )}
-                    onClick={() =>
-                      setRules({
-                        ...rules,
-                        allowedWeekMultiples: toggleArrayValue(
-                          rules.allowedWeekMultiples,
-                          w
-                        ),
-                      })
-                    }
-                  >
-                    {w} {w === 1 ? 'teden' : w < 5 ? 'tedni' : 'tednov'} ({w * 7} dni)
-                  </button>
-                ))}
-              </div>
+          <div className="space-y-1.5 pt-2">
+            <Label className="text-xs text-gray-500 uppercase tracking-wide">
+              Obvezen začetni dan (neobvezno)
+            </Label>
+            <p className="text-xs text-gray-400">
+              Če izberete dan, se morajo dolgotrajne rezervacije začeti na ta dan. Pustite prazno za prost izbor.
+            </p>
+            <div className="flex flex-wrap gap-2 mt-2">
+              <button
+                className={cn(
+                  'px-3 py-1.5 rounded-full text-xs font-medium border transition-colors',
+                  rules.requiredStartDay === null
+                    ? 'bg-primary-600 text-white border-primary-600'
+                    : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+                )}
+                onClick={() => setRules({ ...rules, requiredStartDay: null })}
+              >
+                Brez omejitve
+              </button>
+              {[0, 1, 2, 3, 4, 5, 6].map((d) => (
+                <button
+                  key={d}
+                  className={cn(
+                    'px-3 py-1.5 rounded-full text-xs font-medium border transition-colors',
+                    rules.requiredStartDay === d
+                      ? 'bg-primary-600 text-white border-primary-600'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
+                  )}
+                  onClick={() => setRules({ ...rules, requiredStartDay: d })}
+                >
+                  {dayLabels[d]}
+                </button>
+              ))}
             </div>
-          </>
-        )}
+          </div>
+        </div>
       </Section>
 
       {/* Weekend exceptions */}
       <Section title="Vikend izjema" icon={Settings}>
         <ToggleRow
           label="Dovoli vikend rezervacije"
-          description="Izjema za vikend najeme (npr. petek–nedelja ali sobota–nedelja). Cena za vikend se nastavi v pravilih ceniku s tipom 'Vikend'."
+          description="Izjema za kratke najeme (npr. petek–nedelja ali sobota–nedelja), ne glede na minimalno število dni. Cena za vikend se nastavi v pravilih ceniku s tipom 'Vikend'."
           checked={rules.weekendEnabled}
           onChange={(v) => setRules({ ...rules, weekendEnabled: v })}
         />
@@ -245,7 +243,7 @@ export default function SettingsPage() {
                       })
                     }
                   >
-                    {d} {d === 1 ? 'dan' : d < 5 ? 'dni' : 'dni'}
+                    {d} {d === 1 ? 'dan' : 'dni'}
                   </button>
                 ))}
               </div>

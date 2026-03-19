@@ -21,9 +21,6 @@ interface JetSkiRow {
   name: string
   slug: string
   description: string
-  daily_price_low: number
-  daily_price_high: number
-  daily_price_short: number
   image_url: string
   is_active: boolean
   created_at: string
@@ -33,9 +30,6 @@ interface FormState {
   name: string
   slug: string
   description: string
-  dailyPriceLow: string
-  dailyPriceHigh: string
-  dailyPriceShort: string
   imageUrl: string
 }
 
@@ -43,9 +37,6 @@ const emptyForm: FormState = {
   name: '',
   slug: '',
   description: '',
-  dailyPriceLow: '60',
-  dailyPriceHigh: '80',
-  dailyPriceShort: '100',
   imageUrl: '/images/1.jpg',
 }
 
@@ -86,9 +77,6 @@ export default function JetSkisPage() {
       name: js.name,
       slug: js.slug,
       description: js.description,
-      dailyPriceLow: String(js.daily_price_low),
-      dailyPriceHigh: String(js.daily_price_high),
-      dailyPriceShort: String(js.daily_price_short),
       imageUrl: js.image_url,
     })
     setEditingId(js.id)
@@ -124,9 +112,6 @@ export default function JetSkisPage() {
       name: form.name,
       slug: form.slug,
       description: form.description,
-      dailyPriceLow: parseFloat(form.dailyPriceLow),
-      dailyPriceHigh: parseFloat(form.dailyPriceHigh),
-      dailyPriceShort: parseFloat(form.dailyPriceShort),
       imageUrl: form.imageUrl,
     }
 
@@ -175,7 +160,7 @@ export default function JetSkisPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Jet skiji</h1>
           <p className="text-sm text-gray-500 mt-1">
-            Upravljanje flote jet skijev
+            Upravljanje flote jet skijev — cene nastavite na strani <a href="/admin/pricing" className="text-primary-600 hover:underline">Cenik</a>
           </p>
         </div>
         <Button onClick={openNewForm}>
@@ -226,48 +211,13 @@ export default function JetSkisPage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs">Cena nizka sezona (€)</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={form.dailyPriceLow}
-                  onChange={(e) => setForm((f) => ({ ...f, dailyPriceLow: e.target.value }))}
-                  required
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Cena visoka sezona (€)</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={form.dailyPriceHigh}
-                  onChange={(e) => setForm((f) => ({ ...f, dailyPriceHigh: e.target.value }))}
-                  required
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Cena kratkoročno (€)</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={form.dailyPriceShort}
-                  onChange={(e) => setForm((f) => ({ ...f, dailyPriceShort: e.target.value }))}
-                  required
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs">Slika (URL)</Label>
-                <Input
-                  value={form.imageUrl}
-                  onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
-                  placeholder="/images/1.jpg"
-                />
-              </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Slika (URL)</Label>
+              <Input
+                value={form.imageUrl}
+                onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
+                placeholder="/images/1.jpg"
+              />
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
@@ -330,23 +280,8 @@ export default function JetSkisPage() {
               </div>
 
               {js.description && (
-                <p className="text-sm text-gray-500 mb-3 line-clamp-2">{js.description}</p>
+                <p className="text-sm text-gray-500 mb-3">{js.description}</p>
               )}
-
-              <div className="flex gap-4 text-sm mb-4">
-                <div>
-                  <span className="text-gray-400">Nizka:</span>{' '}
-                  <span className="font-semibold">{Number(js.daily_price_low).toFixed(0)} €</span>
-                </div>
-                <div>
-                  <span className="text-gray-400">Visoka:</span>{' '}
-                  <span className="font-semibold">{Number(js.daily_price_high).toFixed(0)} €</span>
-                </div>
-                <div>
-                  <span className="text-gray-400">Kratko:</span>{' '}
-                  <span className="font-semibold">{Number(js.daily_price_short).toFixed(0)} €</span>
-                </div>
-              </div>
 
               <div className="flex items-center gap-2 border-t border-gray-100 pt-3">
                 <Button

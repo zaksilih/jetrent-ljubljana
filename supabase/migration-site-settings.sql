@@ -23,9 +23,8 @@ create policy "Public can view site settings"
 insert into site_settings (key, value) values (
   'booking_rules',
   '{
-    "enforceWeekly": true,
+    "minDays": 7,
     "requiredStartDay": 6,
-    "allowedWeekMultiples": [1, 2, 3],
     "weekendEnabled": true,
     "weekendStartDays": [5, 6],
     "weekendDurations": [2, 3],

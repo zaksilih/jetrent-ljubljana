@@ -4,13 +4,11 @@ import { seasons } from '@/data/pricing'
 // ── Booking rules ────────────────────────────────────────────
 
 export interface BookingRules {
-  /** Enforce Saturday-to-Saturday weekly bookings */
-  enforceWeekly: boolean
-  /** Required start day (0=Sun, 6=Sat) */
-  requiredStartDay: number
-  /** Allowed week multiples (e.g. [1,2,3] = 7, 14, 21 days) */
-  allowedWeekMultiples: number[]
-  /** Allow weekend exception bookings */
+  /** Minimum number of rental days (e.g. 5) */
+  minDays: number
+  /** Required start day of the week (0=Sun, 6=Sat). null = any day allowed */
+  requiredStartDay: number | null
+  /** Allow weekend exception bookings (shorter than minDays) */
   weekendEnabled: boolean
   /** Which days can a weekend booking start (e.g. [5,6] = Fri, Sat) */
   weekendStartDays: number[]
@@ -21,13 +19,17 @@ export interface BookingRules {
 }
 
 export const defaultBookingRules: BookingRules = {
-  enforceWeekly: true,
+  minDays: 7,
   requiredStartDay: 6,
-  allowedWeekMultiples: [1, 2, 3],
   weekendEnabled: true,
   weekendStartDays: [5, 6],
   weekendDurations: [2, 3],
   singleDayEnabled: false,
+}
+
+const dayNamesLocative: Record<number, string> = {
+  0: 'nedeljo', 1: 'ponedeljek', 2: 'torek', 3: 'sredo',
+  4: 'četrtek', 5: 'petek', 6: 'soboto',
 }
 
 /**
@@ -44,15 +46,13 @@ export function validateBookingDates(
 
   const startDay = getDay(start) // 0=Sun, 6=Sat
 
-  if (!rules.enforceWeekly) return null // no restrictions
-
-  // Check if it's a single day booking
+  // Single day exception
   if (numDays === 1) {
     if (rules.singleDayEnabled) return null
     return 'Enodnevne rezervacije trenutno niso na voljo.'
   }
 
-  // Check if it's a weekend booking
+  // Weekend exception — shorter stays allowed on certain days
   if (rules.weekendEnabled) {
     if (
       rules.weekendStartDays.includes(startDay) &&
@@ -62,25 +62,17 @@ export function validateBookingDates(
     }
   }
 
-  // Check if it's a valid weekly booking
-  if (startDay !== rules.requiredStartDay) {
-    const dayNames: Record<number, string> = {
-      0: 'nedeljo', 1: 'ponedeljek', 2: 'torek', 3: 'sredo',
-      4: 'četrtek', 5: 'petek', 6: 'soboto',
-    }
-    return `Rezervacija se mora začeti v ${dayNames[rules.requiredStartDay] || 'soboto'}.`
+  // Regular booking: check minimum days
+  if (numDays < rules.minDays) {
+    return `Minimalno trajanje najema je ${rules.minDays} dni.`
   }
 
-  const weeks = numDays / 7
-  if (
-    Number.isInteger(weeks) &&
-    rules.allowedWeekMultiples.includes(weeks)
-  ) {
-    return null // valid weekly booking
+  // Check required start day (if set)
+  if (rules.requiredStartDay !== null && startDay !== rules.requiredStartDay) {
+    return `Rezervacija se mora začeti v ${dayNamesLocative[rules.requiredStartDay] || 'soboto'}.`
   }
 
-  const allowedDays = rules.allowedWeekMultiples.map((w) => w * 7).join(', ')
-  return `Dovoljene trajanja: ${allowedDays} dni (sobota–sobota)${rules.weekendEnabled ? ', ali vikend najem (2–3 dni, petek/sobota)' : ''}.`
+  return null
 }
 
 // ── Pricing calculation ──────────────────────────────────────

@@ -9,12 +9,23 @@ import {
   X,
   Loader2,
   Check,
+  Ship,
+  Save,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+
+interface JetSkiPricing {
+  id: string
+  name: string
+  daily_price_low: number
+  daily_price_high: number
+  daily_price_short: number
+  is_active: boolean
+}
 
 interface PricingRule {
   id: string
@@ -66,19 +77,40 @@ const emptyForm: FormState = {
 
 export default function PricingPage() {
   const [rules, setRules] = useState<PricingRule[]>([])
+  const [jetskis, setJetskis] = useState<JetSkiPricing[]>([])
+  const [jetskiPrices, setJetskiPrices] = useState<Record<string, { low: string; high: string; short: string }>>({})
+  const [savingJetskiId, setSavingJetskiId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState<FormState>(emptyForm)
   const [saving, setSaving] = useState(false)
 
-  const fetchRules = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     try {
-      const res = await fetch('/api/admin/pricing')
-      if (!res.ok) return
-      const data = await res.json()
-      setRules(data.rules || [])
+      const [rulesRes, jetskisRes] = await Promise.all([
+        fetch('/api/admin/pricing'),
+        fetch('/api/admin/jetskis'),
+      ])
+      if (rulesRes.ok) {
+        const data = await rulesRes.json()
+        setRules(data.rules || [])
+      }
+      if (jetskisRes.ok) {
+        const data = await jetskisRes.json()
+        const jsList: JetSkiPricing[] = data.jetskis || []
+        setJetskis(jsList)
+        const prices: Record<string, { low: string; high: string; short: string }> = {}
+        for (const js of jsList) {
+          prices[js.id] = {
+            low: String(js.daily_price_low),
+            high: String(js.daily_price_high),
+            short: String(js.daily_price_short),
+          }
+        }
+        setJetskiPrices(prices)
+      }
     } catch (err) {
       console.error(err)
     } finally {
@@ -87,8 +119,30 @@ export default function PricingPage() {
   }, [])
 
   useEffect(() => {
-    fetchRules()
-  }, [fetchRules])
+    fetchData()
+  }, [fetchData])
+
+  async function saveJetskiPrices(id: string) {
+    const p = jetskiPrices[id]
+    if (!p) return
+    setSavingJetskiId(id)
+    try {
+      await fetch('/api/admin/jetskis', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id,
+          dailyPriceLow: parseFloat(p.low),
+          dailyPriceHigh: parseFloat(p.high),
+          dailyPriceShort: parseFloat(p.short),
+        }),
+      })
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setSavingJetskiId(null)
+    }
+  }
 
   function openNewForm() {
     setForm(emptyForm)
@@ -138,7 +192,7 @@ export default function PricingPage() {
       })
       if (res.ok) {
         closeForm()
-        fetchRules()
+        fetchData()
       }
     } catch (err) {
       console.error(err)
@@ -151,7 +205,7 @@ export default function PricingPage() {
     if (!confirm('Ali ste prepričani, da želite izbrisati to pravilo?')) return
     try {
       await fetch(`/api/admin/pricing?id=${id}`, { method: 'DELETE' })
-      fetchRules()
+      fetchData()
     } catch (err) {
       console.error(err)
     }
@@ -164,7 +218,7 @@ export default function PricingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: rule.id, isActive: !rule.is_active }),
       })
-      fetchRules()
+      fetchData()
     } catch (err) {
       console.error(err)
     }
@@ -197,6 +251,97 @@ export default function PricingPage() {
         <strong>Kako deluje:</strong> Za vsak dan rezervacije sistem poišče aktivno pravilo z
         najvišjo prioriteto, ki pokriva ta datum. Če pravila ni, se uporabi privzeta cena jet skija.
       </div>
+
+      {/* Jet ski base prices */}
+      {jetskis.filter((js) => js.is_active).length > 0 && (
+        <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4">
+          <div>
+            <h3 className="font-semibold text-gray-900">Privzete cene jet skijev</h3>
+            <p className="text-xs text-gray-400 mt-0.5">
+              Te cene se uporabijo, kadar nobeno sezonsko pravilo ne pokriva izbranega datuma.
+            </p>
+          </div>
+          <div className="divide-y divide-gray-100">
+            {jetskis
+              .filter((js) => js.is_active)
+              .map((js) => {
+                const p = jetskiPrices[js.id]
+                if (!p) return null
+                return (
+                  <div key={js.id} className="flex flex-col sm:flex-row sm:items-center gap-3 py-3 first:pt-0 last:pb-0">
+                    <div className="flex items-center gap-2 sm:w-48 shrink-0">
+                      <Ship className="w-4 h-4 text-primary-600" />
+                      <span className="font-medium text-sm text-gray-900">{js.name}</span>
+                    </div>
+                    <div className="flex items-center gap-3 flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <Label className="text-[11px] text-gray-400 whitespace-nowrap">Nizka €</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          className="w-20 h-8 text-sm"
+                          value={p.low}
+                          onChange={(e) =>
+                            setJetskiPrices((prev) => ({
+                              ...prev,
+                              [js.id]: { ...prev[js.id], low: e.target.value },
+                            }))
+                          }
+                        />
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Label className="text-[11px] text-gray-400 whitespace-nowrap">Visoka €</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          className="w-20 h-8 text-sm"
+                          value={p.high}
+                          onChange={(e) =>
+                            setJetskiPrices((prev) => ({
+                              ...prev,
+                              [js.id]: { ...prev[js.id], high: e.target.value },
+                            }))
+                          }
+                        />
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Label className="text-[11px] text-gray-400 whitespace-nowrap">Kratko €</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          className="w-20 h-8 text-sm"
+                          value={p.short}
+                          onChange={(e) =>
+                            setJetskiPrices((prev) => ({
+                              ...prev,
+                              [js.id]: { ...prev[js.id], short: e.target.value },
+                            }))
+                          }
+                        />
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 text-xs ml-auto"
+                        disabled={savingJetskiId === js.id}
+                        onClick={() => saveJetskiPrices(js.id)}
+                      >
+                        {savingJetskiId === js.id ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        ) : (
+                          <><Save className="w-3.5 h-3.5 mr-1" /> Shrani</>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                )
+              })}
+          </div>
+        </div>
+      )}
 
       {/* Form */}
       {showForm && (
