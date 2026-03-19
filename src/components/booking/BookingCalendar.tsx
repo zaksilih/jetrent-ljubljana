@@ -6,16 +6,22 @@ import { sl } from 'date-fns/locale'
 import {
   addMonths,
   format,
-  isBefore,
   startOfDay,
   eachDayOfInterval,
   parseISO,
   isWithinInterval,
+  differenceInDays,
+  getDay,
 } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { getSupabase } from '@/lib/supabase'
-import type { AvailabilityData } from '@/lib/booking'
+import {
+  validateBookingDates,
+  defaultBookingRules,
+  type AvailabilityData,
+  type BookingRules,
+} from '@/lib/booking'
 import { bookingContent } from '@/data/booking'
 import { cn } from '@/lib/utils'
 
@@ -34,20 +40,20 @@ export default function BookingCalendar({ onSelect, initialRange }: BookingCalen
     pending: [],
     blocked: [],
   })
+  const [bookingRules, setBookingRules] = useState<BookingRules>(defaultBookingRules)
   const [loading, setLoading] = useState(true)
 
-  // Fetch availability data from Supabase
+  // Fetch availability data and booking rules
   useEffect(() => {
-    async function fetchAvailability() {
+    async function fetchData() {
       setLoading(true)
       try {
         const today = startOfDay(new Date())
         const futureLimit = format(addMonths(today, 6), 'yyyy-MM-dd')
         const todayStr = format(today, 'yyyy-MM-dd')
 
-        // Fetch bookings that overlap with our visible range
         const sb = getSupabase()
-        const [bookingsRes, blockedRes] = await Promise.all([
+        const [bookingsRes, blockedRes, rulesRes] = await Promise.all([
           sb
             .from('bookings')
             .select('start_date, end_date, status')
@@ -59,6 +65,7 @@ export default function BookingCalendar({ onSelect, initialRange }: BookingCalen
             .select('start_date, end_date')
             .gte('end_date', todayStr)
             .lte('start_date', futureLimit),
+          fetch('/api/booking-rules').then((r) => r.json()).catch(() => null),
         ])
 
         const booked: AvailabilityData['booked'] = []
@@ -66,9 +73,9 @@ export default function BookingCalendar({ onSelect, initialRange }: BookingCalen
 
         if (bookingsRes.data) {
           for (const b of bookingsRes.data) {
-            const range = { start: b.start_date, end: b.end_date }
-            if (b.status === 'confirmed') booked.push(range)
-            else pending.push(range)
+            const r = { start: b.start_date, end: b.end_date }
+            if (b.status === 'confirmed') booked.push(r)
+            else pending.push(r)
           }
         }
 
@@ -78,6 +85,10 @@ export default function BookingCalendar({ onSelect, initialRange }: BookingCalen
         }))
 
         setAvailability({ booked, pending, blocked })
+
+        if (rulesRes?.rules) {
+          setBookingRules(rulesRes.rules)
+        }
       } catch (err) {
         console.error('Failed to fetch availability:', err)
       } finally {
@@ -85,7 +96,7 @@ export default function BookingCalendar({ onSelect, initialRange }: BookingCalen
       }
     }
 
-    fetchAvailability()
+    fetchData()
   }, [])
 
   // Build sets of disabled/colored days
@@ -96,10 +107,9 @@ export default function BookingCalendar({ onSelect, initialRange }: BookingCalen
     for (const r of ranges) {
       const start = parseISO(r.start)
       const end = parseISO(r.end)
-      // end date is exclusive (checkout day) — include all days the jetski is in use
       const interval = eachDayOfInterval({
         start,
-        end: new Date(end.getTime() - 86400000), // up to end - 1 day
+        end: new Date(end.getTime() - 86400000),
       })
       days.push(...interval)
     }
@@ -119,7 +129,37 @@ export default function BookingCalendar({ onSelect, initialRange }: BookingCalen
         )
       : false
 
-  const canProceed = range?.from && range?.to && !rangeHasConflict
+  // Validate against booking rules
+  const ruleError =
+    range?.from && range?.to
+      ? validateBookingDates(range.from, range.to, bookingRules)
+      : null
+
+  const canProceed = range?.from && range?.to && !rangeHasConflict && !ruleError
+
+  // Build a helper message showing allowed booking types
+  const rulesHint = bookingRules.enforceWeekly
+    ? (() => {
+        const parts: string[] = []
+        const dayName: Record<number, string> = {
+          0: 'nedelje', 1: 'ponedeljka', 2: 'torka', 3: 'srede',
+          4: 'četrtka', 5: 'petka', 6: 'sobote',
+        }
+        const weekDesc = bookingRules.allowedWeekMultiples
+          .map((w) => `${w * 7} dni`)
+          .join(', ')
+        parts.push(`Tedenski: od ${dayName[bookingRules.requiredStartDay]} do ${dayName[bookingRules.requiredStartDay]} (${weekDesc})`)
+        if (bookingRules.weekendEnabled) {
+          const starts = bookingRules.weekendStartDays.map((d) => dayName[d]).join('/')
+          const durs = bookingRules.weekendDurations.join('–')
+          parts.push(`Vikend: ${durs} dni (začetek ${starts})`)
+        }
+        if (bookingRules.singleDayEnabled) {
+          parts.push('Enodnevni: 1 dan')
+        }
+        return parts.join(' · ')
+      })()
+    : null
 
   return (
     <div className="space-y-6">
@@ -127,6 +167,13 @@ export default function BookingCalendar({ onSelect, initialRange }: BookingCalen
         <h2 className="heading-2 text-gray-900 mb-2">{content.title}</h2>
         <p className="text-gray-500">{content.subtitle}</p>
       </div>
+
+      {/* Booking rules hint */}
+      {rulesHint && (
+        <div className="bg-primary-50 border border-primary-200 rounded-lg px-4 py-2.5 text-center text-sm text-primary-800">
+          {rulesHint}
+        </div>
+      )}
 
       {/* Legend */}
       <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
@@ -188,6 +235,14 @@ export default function BookingCalendar({ onSelect, initialRange }: BookingCalen
       {rangeHasConflict && (
         <div className="text-center">
           <Badge variant="destructive">Izbrani datumi se prekrivajo z obstoječo rezervacijo</Badge>
+        </div>
+      )}
+
+      {ruleError && !rangeHasConflict && (
+        <div className="text-center">
+          <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200 text-sm px-4 py-1.5">
+            {ruleError}
+          </Badge>
         </div>
       )}
 

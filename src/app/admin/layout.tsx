@@ -10,6 +10,7 @@ import {
   ClipboardList,
   DollarSign,
   Ship,
+  Settings,
   LogOut,
   Menu,
   X,
@@ -26,6 +27,7 @@ const navItems = [
   { href: '/admin/calendar', label: 'Koledar', icon: CalendarDays },
   { href: '/admin/pricing', label: 'Cenik', icon: DollarSign },
   { href: '/admin/jetskis', label: 'Jet skiji', icon: Ship },
+  { href: '/admin/settings', label: 'Nastavitve', icon: Settings },
 ]
 
 // ── Layout ───────────────────────────────────────────────────

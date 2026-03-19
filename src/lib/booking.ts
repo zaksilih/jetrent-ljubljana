@@ -1,5 +1,87 @@
-import { differenceInDays, format, isWithinInterval, parseISO, addDays } from 'date-fns'
+import { differenceInDays, format, isWithinInterval, parseISO, addDays, getDay } from 'date-fns'
 import { seasons } from '@/data/pricing'
+
+// ── Booking rules ────────────────────────────────────────────
+
+export interface BookingRules {
+  /** Enforce Saturday-to-Saturday weekly bookings */
+  enforceWeekly: boolean
+  /** Required start day (0=Sun, 6=Sat) */
+  requiredStartDay: number
+  /** Allowed week multiples (e.g. [1,2,3] = 7, 14, 21 days) */
+  allowedWeekMultiples: number[]
+  /** Allow weekend exception bookings */
+  weekendEnabled: boolean
+  /** Which days can a weekend booking start (e.g. [5,6] = Fri, Sat) */
+  weekendStartDays: number[]
+  /** Allowed durations for weekend (e.g. [2,3]) */
+  weekendDurations: number[]
+  /** Allow single day bookings */
+  singleDayEnabled: boolean
+}
+
+export const defaultBookingRules: BookingRules = {
+  enforceWeekly: true,
+  requiredStartDay: 6,
+  allowedWeekMultiples: [1, 2, 3],
+  weekendEnabled: true,
+  weekendStartDays: [5, 6],
+  weekendDurations: [2, 3],
+  singleDayEnabled: false,
+}
+
+/**
+ * Validate a date range against booking rules.
+ * Returns null if valid, or a Slovenian error message if invalid.
+ */
+export function validateBookingDates(
+  start: Date,
+  end: Date,
+  rules: BookingRules
+): string | null {
+  const numDays = differenceInDays(end, start)
+  if (numDays < 1) return 'Izberite vsaj 1 dan.'
+
+  const startDay = getDay(start) // 0=Sun, 6=Sat
+
+  if (!rules.enforceWeekly) return null // no restrictions
+
+  // Check if it's a single day booking
+  if (numDays === 1) {
+    if (rules.singleDayEnabled) return null
+    return 'Enodnevne rezervacije trenutno niso na voljo.'
+  }
+
+  // Check if it's a weekend booking
+  if (rules.weekendEnabled) {
+    if (
+      rules.weekendStartDays.includes(startDay) &&
+      rules.weekendDurations.includes(numDays)
+    ) {
+      return null // valid weekend booking
+    }
+  }
+
+  // Check if it's a valid weekly booking
+  if (startDay !== rules.requiredStartDay) {
+    const dayNames: Record<number, string> = {
+      0: 'nedeljo', 1: 'ponedeljek', 2: 'torek', 3: 'sredo',
+      4: 'četrtek', 5: 'petek', 6: 'soboto',
+    }
+    return `Rezervacija se mora začeti v ${dayNames[rules.requiredStartDay] || 'soboto'}.`
+  }
+
+  const weeks = numDays / 7
+  if (
+    Number.isInteger(weeks) &&
+    rules.allowedWeekMultiples.includes(weeks)
+  ) {
+    return null // valid weekly booking
+  }
+
+  const allowedDays = rules.allowedWeekMultiples.map((w) => w * 7).join(', ')
+  return `Dovoljene trajanja: ${allowedDays} dni (sobota–sobota)${rules.weekendEnabled ? ', ali vikend najem (2–3 dni, petek/sobota)' : ''}.`
+}
 
 // ── Pricing calculation ──────────────────────────────────────
 
@@ -114,9 +196,30 @@ export interface PricingRuleRow {
 }
 
 /**
+ * Determine booking type based on duration and start day.
+ * - 1 day → 'daily'
+ * - 2-3 days starting Fri or Sat → 'weekend'
+ * - anything else → 'seasonal'
+ */
+export function getBookingType(
+  startDate: Date,
+  numDays: number
+): 'daily' | 'weekend' | 'seasonal' {
+  if (numDays === 1) return 'daily'
+  const startDay = startDate.getDay() // 0=Sun, 5=Fri, 6=Sat
+  if (numDays >= 2 && numDays <= 3 && (startDay === 5 || startDay === 6)) {
+    return 'weekend'
+  }
+  return 'seasonal'
+}
+
+/**
  * Calculate price using pricing rules from the database.
- * For each day in the range, finds the highest-priority active rule
- * that covers that date. Falls back to the jet ski's default seasonal price.
+ * Respects rule_type:
+ *   - 'weekend' rules only apply to weekend bookings (2-3 days, Fri/Sat start)
+ *   - 'daily' rules only apply to single-day bookings
+ *   - 'low_season', 'high_season', 'custom' apply to seasonal bookings by date
+ * Falls back to the jet ski's default seasonal price.
  */
 export function calculatePriceWithRules(
   startDate: Date,
@@ -126,18 +229,32 @@ export function calculatePriceWithRules(
   deliveryKm = 0
 ): PriceBreakdown & { dailyRates: DailyPricing[] } {
   const numDays = differenceInDays(endDate, startDate)
+  const bookingType = getBookingType(startDate, numDays)
   const dailyRates: DailyPricing[] = []
 
   let rentalTotal = 0
+
+  // Rule types that may apply for this booking type
+  const applicableTypes: string[] = (() => {
+    switch (bookingType) {
+      case 'daily':
+        return ['daily']
+      case 'weekend':
+        return ['weekend']
+      case 'seasonal':
+        return ['low_season', 'high_season', 'custom']
+    }
+  })()
 
   for (let i = 0; i < numDays; i++) {
     const day = addDays(startDate, i)
     const dayStr = format(day, 'yyyy-MM-dd')
 
-    // Find matching rule with highest priority
+    // Find matching rule: must be correct type, cover this date, highest priority
     let matchedRule: PricingRuleRow | null = null
     for (const rule of rules) {
       if (!rule.is_active) continue
+      if (!applicableTypes.includes(rule.rule_type)) continue
       if (dayStr >= rule.start_date && dayStr <= rule.end_date) {
         if (!matchedRule || rule.priority > matchedRule.priority) {
           matchedRule = rule
@@ -152,7 +269,7 @@ export function calculatePriceWithRules(
       rate = Number(matchedRule.price_per_day)
       source = matchedRule.name
     } else {
-      // Fall back to default seasonal pricing
+      // Fall back to default seasonal pricing from jet ski
       const season = getSeasonForDate(day, day.getFullYear())
       rate = getDailyRate(season, defaultPrices)
       source = 'default'
