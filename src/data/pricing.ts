@@ -41,20 +41,6 @@ export const pricingTiers: PricingTier[] = [
     note: 'Priporočamo rezervacijo vsaj 2 tedna vnaprej',
   },
   {
-    id: 'short-term',
-    title: 'Kratkoročni najem',
-    pricePerDay: 100,
-    description: 'Za krajše dogodivščine in preizkus',
-    features: [
-      '100 €/dan',
-      'Od 1 do 4 dni',
-      'Prikolica vključena',
-      'Ob razpoložljivosti',
-    ],
-    isRecommended: false,
-    note: 'Prednost imajo tedenski najemi',
-  },
-  {
     id: 'weekend',
     title: 'Vikend najem',
     pricePerDay: 90,
@@ -67,15 +53,29 @@ export const pricingTiers: PricingTier[] = [
     ],
     isRecommended: false,
   },
+  {
+    id: 'short-term',
+    title: 'Enodnevni najem',
+    pricePerDay: 100,
+    description: 'Za krajše dogodivščine in preizkus',
+    features: [
+      '100 €/dan',
+      'Prikolica vključena',
+      'Ob razpoložljivosti',
+    ],
+    isRecommended: false,
+    note: 'Prednost imajo tedenski najemi',
+  },
 ]
 
 // Pricing notes displayed below pricing cards
 export const pricingNotes = [
   'Tedenski in dvotedenski najemi imajo prednost pri rezervaciji.',
   'Stranka mora imeti vozilo s kljuko za vleko prikolice.',
+  'Stranka mora imeti veljavno dovoljenje za voditelja čolna.',
   'Prevzem in vračilo potekata po dogovoru v okolici Ljubljane.',
   'Ob prevzemu je obvezna kavcija v višini 500 €.',
-  'Kavcija se vrne v celoti ob nepoškodovanem vračilu.',
+  'Kavcija se vrne v celoti ob vrnitvi nepoškodovanega plovila.',
   'Cene ne vključujejo goriva – stranka vrne z istim nivojem goriva.',
 ]
 

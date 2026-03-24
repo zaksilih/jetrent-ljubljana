@@ -32,13 +32,13 @@ export function Header() {
   }, [pathname])
 
   // When on a dark hero page and not scrolled, use light colors
-  const isLight = isDarkHero && !scrolled
+  const isLight = isDarkHero && !scrolled && !mobileMenuOpen
 
   return (
     <header
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        scrolled
+        scrolled || mobileMenuOpen
           ? 'bg-white/95 backdrop-blur-md shadow-sm'
           : 'bg-transparent'
       )}
@@ -114,7 +114,7 @@ export function Header() {
         <div
           className={cn(
             'lg:hidden overflow-hidden transition-all duration-300 ease-in-out',
-            mobileMenuOpen ? 'max-h-96 pb-6' : 'max-h-0'
+            mobileMenuOpen ? 'max-h-[500px] pb-6' : 'max-h-0'
           )}
         >
           <div className={cn(

@@ -58,8 +58,8 @@ export function HowItWorks() {
           {/* Inline CTA */}
           <div className="text-center mt-14">
             <Button asChild variant="cta" size="lg">
-              <Link href="/kontakt" className="gap-2">
-                Začnite s prvim korakom
+              <Link href="/rezervacija" className="gap-2">
+                Rezervirajte svoj termin
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </Button>

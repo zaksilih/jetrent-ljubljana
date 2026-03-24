@@ -51,7 +51,7 @@ export function Hero() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               <Button asChild variant="cta" size="xl" className="shadow-xl shadow-primary-500/25">
-                <Link href="/kontakt" className="gap-2">
+                <Link href="/rezervacija" className="gap-2">
                   {hero.primaryCTA}
                   <ArrowRight className="w-5 h-5" />
                 </Link>

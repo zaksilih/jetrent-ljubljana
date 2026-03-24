@@ -8,8 +8,7 @@ import { pricingTiers } from '@/data/pricing'
 
 export function PricingPreview() {
   const { pricingPreview } = homeContent
-  // Show only first 3 pricing tiers on homepage
-  const previewTiers = pricingTiers.slice(0, 3)
+  const previewTiers = pricingTiers
 
   return (
     <section className="section-padding bg-white relative overflow-hidden">
@@ -31,7 +30,7 @@ export function PricingPreview() {
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 max-w-6xl mx-auto">
           {previewTiers.map((tier) => (
             <Card
               key={tier.id}
@@ -86,12 +85,19 @@ export function PricingPreview() {
 
               <CardFooter>
                 <Button asChild variant={tier.isRecommended ? 'cta' : 'secondary'} className="w-full">
-                  <Link href="/kontakt">Povpraševanje</Link>
+                  <Link href="/rezervacija">Povpraševanje</Link>
                 </Button>
               </CardFooter>
             </Card>
           ))}
         </div>
+
+        {/* Urgency note */}
+        {pricingPreview.urgencyNote && (
+          <p className="text-center mt-10 text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg py-3 px-6 max-w-lg mx-auto">
+            {pricingPreview.urgencyNote}
+          </p>
+        )}
 
         {/* View all CTA */}
         <div className="text-center mt-12">

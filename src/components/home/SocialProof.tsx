@@ -28,6 +28,11 @@ export function SocialProof() {
                 )
               })}
             </div>
+            {socialProof.subtitle && (
+              <p className="text-center text-xs text-gray-400 mt-4 px-4">
+                {socialProof.subtitle}
+              </p>
+            )}
           </div>
         </div>
       </div>

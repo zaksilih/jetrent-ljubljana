@@ -33,7 +33,7 @@ export function ContactCTA() {
                 size="xl"
                 className="bg-white text-primary-700 hover:bg-primary-50 shadow-xl shadow-black/10 font-semibold"
               >
-                <Link href="/kontakt" className="gap-2">
+                <Link href="/rezervacija" className="gap-2">
                   {contactCTA.ctaText}
                   <ArrowRight className="w-5 h-5" />
                 </Link>
@@ -45,7 +45,7 @@ export function ContactCTA() {
               >
                 <a href={`tel:${businessInfo.contact.phone}`} className="gap-2">
                   <Phone className="w-5 h-5" />
-                  {contactCTA.secondaryCTA}
+                  {contactCTA.phone || contactCTA.secondaryCTA}
                 </a>
               </Button>
             </div>

@@ -10,26 +10,32 @@ export const faqItems: FAQItem[] = [
   {
     id: 'pickup-location',
     question: 'Kje poteka prevzem jet skija?',
-    answer: 'Prevzem poteka v okolici Ljubljane, točna lokacija pa se dogovori ob potrditvi rezervacije. Prilagodimo se vašemu urniku in lahko po dogovoru organiziramo tudi dostavo v bližnje kraje.',
+    answer: 'Prevzem poteka v okolici Ljubljane. Točno lokacijo določimo ob potrditvi rezervacije. Po dogovoru je možna tudi dostava (doplačilo 0,70 €/km).',
     category: 'general',
   },
   {
     id: 'trailer-included',
-    question: 'Ali je prikolica vključena v ceno najema?',
-    answer: 'Da, prikolica je vedno vključena v ceno najema. Jet ski prevzamete skupaj s prikolico in ga z njo tudi vrnete. Prikolica je registrirana in opremljena za cestni promet.',
+    question: 'Ali je prikolica vključena v ceno?',
+    answer: 'Da. Prikolica je vedno vključena, registrirana in pripravljena za uporabo. Jet ski prevzamete skupaj s prikolico in ga po koncu najema vrnete.',
     category: 'rental',
   },
   {
     id: 'tow-hitch',
     question: 'Ali potrebujem kljuko na vozilu?',
-    answer: 'Da, za prevzem jet skija s prikolico potrebujete vozilo s tovorno kljuko. Prepričajte se, da ima vaše vozilo ustrezno vlečno kapaciteto (prikolica z jet skijem tehta približno 400 kg). Preverite tudi, ali imate ustrezne dokumente za vleko prikolice.',
+    answer: 'Da. Vozilo mora imeti vlečno kljuko in dovoljeno vlečno maso (približno 400 kg). Preverite tudi, ali imate ustrezne dokumente za vleko prikolice.',
     category: 'requirements',
   },
   {
     id: 'weekend-rental',
     question: 'Ali lahko najamem jet ski samo za vikend?',
-    answer: 'Da, vikend najem je možen ob razpoložljivosti. Vikend najem traja od petka popoldan do nedelje popoldan in stane 90 €/dan (skupaj 270 € za 3 dni). Upoštevajte, da imajo tedenski najemi prednost pri rezervaciji.',
+    answer: 'Da, vikend najem je možen glede na razpoložljivost. Petek popoldan – nedelja popoldan. Cena: 90 €/dan.',
     category: 'rental',
+  },
+  {
+    id: 'boat-license',
+    question: 'Ali potrebujem dovoljenje za voditelja čolna?',
+    answer: 'Da, obvezno. Za upravljanje jet skija na Hrvaškem potrebujete veljavno dovoljenje za voditelja čolna. Več informacij lahko preverite na mmpi.gov.hr. Ob prevzemu morate pokazati veljavno dovoljenje.',
+    category: 'requirements',
   },
   {
     id: 'weekly-rental',
@@ -64,7 +70,7 @@ export const faqItems: FAQItem[] = [
   {
     id: 'pickup-requirements',
     question: 'Kaj potrebujem ob prevzemu?',
-    answer: 'Ob prevzemu potrebujete: osebni dokument, vozniško dovoljenje, vozilo s kljuko ustrezne vlečne kapacitete, kavcijo (500 €) ter podpisan najemni dogovor. Na prevzemu vam razložimo delovanje jet skija in varnostna pravila.',
+    answer: 'Ob prevzemu potrebujete: osebni dokument, vozniško dovoljenje, dovoljenje za voditelja čolna, vozilo s kljuko ustrezne vlečne kapacitete, kavcijo (500 €) ter podpisan najemni dogovor. Na prevzemu vam razložimo delovanje jet skija in varnostna pravila.',
     category: 'requirements',
   },
   {

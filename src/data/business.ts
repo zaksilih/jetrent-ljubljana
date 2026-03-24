@@ -5,10 +5,10 @@ export const businessInfo = {
   
   // Contact placeholders - replace with real values
   contact: {
-    email: 'info@jet4you.si',
-    phone: '+386 40 123 456',
-    address: 'Ljubljana, Slovenija',
-    pickupLocation: 'Okolica Ljubljane (po dogovoru)',
+    email: 'info@jet4you.com',
+    phone: '+386 40 698 807',
+    address: 'Pot v hribec 3A, 1231 Ljubljana-Črnuče',
+    pickupLocation: 'Pot v hribec 3A, 1231 Ljubljana-Črnuče',
   },
   
   // Social media placeholders

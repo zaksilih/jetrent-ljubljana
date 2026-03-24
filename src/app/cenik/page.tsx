@@ -1,11 +1,42 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Check, Star, Info } from 'lucide-react'
+import { Check, Star, Info, CalendarClock, Car, FileCheck, MapPin, Coins, ShieldCheck, Fuel } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { pricingTiers, pricingNotes } from '@/data/pricing'
+import { pricingTiers } from '@/data/pricing'
 import { pricingContent } from '@/data/content'
+
+const importantNotes = [
+  {
+    icon: CalendarClock,
+    text: 'Prednost pri rezervaciji imajo tedenski in dvotedenski najemi.',
+  },
+  {
+    icon: Car,
+    text: 'Stranka mora imeti vozilo s kljuko za vleko prikolice.',
+  },
+  {
+    icon: FileCheck,
+    text: 'Stranka mora imeti veljavno dovoljenje za voditelja čolna.',
+  },
+  {
+    icon: MapPin,
+    text: 'Prevzem in vračilo potekata po dogovoru v okolici Ljubljane.',
+  },
+  {
+    icon: Coins,
+    text: 'Ob prevzemu je obvezna kavcija v višini 500 €.',
+  },
+  {
+    icon: ShieldCheck,
+    text: 'Kavcija se vrne v celoti ob vrnitvi nepoškodovanega plovila.',
+  },
+  {
+    icon: Fuel,
+    text: 'Cene ne vključujejo goriva – stranka vrne z istim nivojem goriva.',
+  },
+]
 
 export const metadata: Metadata = {
   title: 'Cenik najema jet skija',
@@ -99,7 +130,7 @@ export default function CenikPage() {
                     variant={tier.isRecommended ? 'cta' : 'secondary'}
                     className="w-full"
                   >
-                    <Link href="/kontakt">Pošlji povpraševanje</Link>
+                    <Link href="/rezervacija">Pošlji povpraševanje</Link>
                   </Button>
                 </CardFooter>
               </Card>
@@ -108,32 +139,59 @@ export default function CenikPage() {
         </div>
       </section>
 
-      {/* Pricing Notes */}
-      <section className="section-padding-sm bg-gray-50">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl mx-auto">
-            <div className="bg-white rounded-2xl border border-gray-200 p-6 lg:p-8">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center shrink-0">
-                  <Info className="w-5 h-5 text-primary-600" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-4">
-                    Pomembne informacije
-                  </h3>
-                  <ul className="space-y-3">
-                    {pricingNotes.map((note, index) => (
-                      <li
-                        key={index}
-                        className="flex items-start gap-2 text-sm text-gray-600"
-                      >
-                        <span className="text-primary-500 mt-1">•</span>
-                        {note}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
+      {/* Pomembne informacije */}
+      <section className="relative overflow-hidden">
+        <div className="bg-gradient-to-br from-primary-950 via-primary-900 to-primary-950 py-16 lg:py-20">
+          {/* Subtle background texture */}
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAxOGMzLjMxNCAwIDYgMi42ODYgNiA2cy0yLjY4NiA2LTYgNi02LTIuNjg2LTYtNiAyLjY4Ni02IDYtNiIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utb3BhY2l0eT0iLjAyIiBzdHJva2Utd2lkdGg9IjIiLz48L2c+PC9zdmc+')] opacity-40" />
+          <div className="absolute top-0 left-1/3 w-[500px] h-[500px] bg-primary-500/5 rounded-full blur-3xl" />
+
+          <div className="container relative mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Section header */}
+            <div className="text-center max-w-2xl mx-auto mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+                Pomembne informacije
+              </h2>
+              <p className="text-primary-200 text-lg">
+                Za nemoteno in varno izkušnjo, preberite spodnje pogoje.
+              </p>
+            </div>
+
+            {/* Grid of info cards */}
+            <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {importantNotes.slice(0, 6).map((note, index) => {
+                const Icon = note.icon
+                return (
+                  <div
+                    key={index}
+                    className="flex items-center gap-4 rounded-xl bg-gradient-to-r from-primary-700/60 to-primary-700/40 border border-primary-600/30 backdrop-blur-sm px-5 py-4 transition-colors hover:from-primary-700/80 hover:to-primary-700/60"
+                  >
+                    <div className="w-11 h-11 rounded-lg bg-primary-500/20 border border-primary-400/20 flex items-center justify-center shrink-0">
+                      <Icon className="w-5 h-5 text-primary-300" />
+                    </div>
+                    <span className="text-sm text-primary-100 leading-snug">
+                      {note.text}
+                    </span>
+                  </div>
+                )
+              })}
+              {/* Last item spans full width */}
+              {importantNotes.length > 6 && (() => {
+                const lastNote = importantNotes[6]
+                const Icon = lastNote.icon
+                return (
+                  <div
+                    className="sm:col-span-2 flex items-center gap-4 rounded-xl bg-gradient-to-r from-primary-700/60 to-primary-700/40 border border-primary-600/30 backdrop-blur-sm px-5 py-4 transition-colors hover:from-primary-700/80 hover:to-primary-700/60"
+                  >
+                    <div className="w-11 h-11 rounded-lg bg-primary-500/20 border border-primary-400/20 flex items-center justify-center shrink-0">
+                      <Icon className="w-5 h-5 text-primary-300" />
+                    </div>
+                    <span className="text-sm text-primary-100 leading-snug">
+                      {lastNote.text}
+                    </span>
+                  </div>
+                )
+              })()}
             </div>
           </div>
         </div>
@@ -154,7 +212,7 @@ export default function CenikPage() {
               size="lg"
               className="bg-white text-primary-600 hover:bg-primary-50"
             >
-              <Link href="/kontakt">Pošlji povpraševanje</Link>
+              <Link href="/rezervacija">Pošlji povpraševanje</Link>
             </Button>
           </div>
         </div>

@@ -1,17 +1,17 @@
 // Page content in Slovenian - centralized for easy editing
 export const homeContent = {
   hero: {
-    title: 'Vaše poletje.',
-    titleAccent: 'Vaš jet ski.',
-    subtitle: 'Prevzemite Sea-Doo Spark s prikolico v Ljubljani — jutri ste že na hrvaškem morju. Brez čakanja, brez birokratskih zapletov.',
-    primaryCTA: 'Rezerviraj termin',
-    secondaryCTA: 'Poglej cenik',
+    title: 'Najemite jet ski v Ljubljani.',
+    titleAccent: 'Že jutri ste na morju.',
+    subtitle: 'Prevzemite Sea-Doo Spark s prikolico in brez zapletov odpeljite naravnost na Hrvaško. Brez čakanja. Brez birokratskih zapletov.',
+    primaryCTA: 'Rezervirajte termin',
+    secondaryCTA: 'Poglejte cenik',
     badge: 'Poletje 2026 — termini se polnijo',
     trustItems: [
-      'Sea-Doo Spark 2UP',
-      'Prikolica vključena',
       'Prevzem v Ljubljani',
-      'Dokumenti za HR urejeni',
+      'Prikolica vključena',
+      'Dokumenti za Hrvaško morje urejeni',
+      'Tedenski najem = najboljša cena',
     ],
   },
 
@@ -19,41 +19,42 @@ export const homeContent = {
     stat1: { value: '60+', label: 'uspešnih najemov' },
     stat2: { value: '4.9', label: 'ocena strank' },
     stat3: { value: '24h', label: 'odzivni čas' },
+    subtitle: 'Stranke se vsako leto vračajo. Najbolj priljubljeni termini so rezervirani že tedne vnaprej.',
   },
 
   benefits: {
-    label: 'Zakaj JetRent',
-    title: 'Vse kar potrebujete je avtomobil s kljuko',
-    subtitle: 'Mi poskrbimo za vse ostalo — od prikolice do dokumentacije za Hrvaško.',
+    label: 'Zakaj Jet4You',
+    title: 'Potrebujete samo avto s kljuko in veljaven izpit za voditelja čolna.',
+    subtitle: 'Za vse ostalo poskrbimo mi.',
     items: [
       {
         title: 'Prevzem v Ljubljani',
-        description: 'Dogovorimo se za lokacijo in uro. Brez poti na obalo samo za prevzem — jet ski vas čaka doma.',
+        description: 'Dogovorimo se za termin in lokacijo — jet ski vas čaka pripravljen.',
         icon: 'MapPin',
       },
       {
-        title: 'Prikolica v ceni',
-        description: 'Registrirana prikolica je vedno vključena. Pripnete, odpeljete, vrnete. Tako preprosto.',
+        title: 'Prikolica vključena',
+        description: 'Prikolica ima opravljen tehnični pregled in je pripravljena. Priklopite, odpeljete, uživate.',
         icon: 'Truck',
       },
       {
         title: 'Urejeno za Hrvaško',
-        description: 'Celotna dokumentacija, registracija in navodila za hrvaške predpise — brez vaše skrbi.',
+        description: 'Vsa dokumentacija in navodila za brezskrben dopust na morju. Hrvaška vinjeta in komercialno zavarovanje je urejeno.',
         icon: 'FileCheck',
       },
       {
-        title: 'Tedenski najem, nižja cena',
-        description: 'Že od 60 €/dan v nizki sezoni. Daljši najem = boljša cena. Vikend paketi ob razpoložljivosti.',
+        title: 'Tedenski najem = najboljša cena',
+        description: 'Daljši najem pomeni nižjo ceno na dan. Najbolj priljubljena izbira.',
         icon: 'TrendingDown',
       },
       {
         title: 'Enostavno za začetnike',
-        description: 'Sea-Doo Spark je zasnovan za intuitivno vožnjo. Ob prevzemu prejmete podrobna navodila.',
+        description: 'Prejmete jasna navodila. Jet ski je stabilen in enostaven za uporabo.',
         icon: 'Zap',
       },
       {
         title: 'Brez skritih stroškov',
-        description: 'Cena vključuje prikolico, dokumentacijo in navodila. Gorivo in kavcija 500 € ob prevzemu.',
+        description: 'Vse vključeno. Kavcija 500 € se vrne ob vračilu brez poškodb.',
         icon: 'ShieldCheck',
       },
     ],
@@ -61,32 +62,33 @@ export const homeContent = {
 
   howItWorks: {
     label: 'Kako deluje',
-    title: 'Od povpraševanja do morja v 3 korakih',
+    title: 'Od rezervacije do morja v 3 korakih',
     subtitle: 'Postopek je zasnovan tako, da ste na dopustu čim hitreje.',
     steps: [
       {
         step: 1,
-        title: 'Pošljete povpraševanje',
-        description: 'Izberite termin in nam sporočite destinacijo. Odgovorimo v roku 24 ur.',
+        title: 'Rezervirate termin',
+        description: 'Izberete datume in pošljete rezervacijo. Termin zadržimo za vas.',
       },
       {
         step: 2,
-        title: 'Potrdimo & se dogovorimo',
-        description: 'Preverimo razpoložljivost, se dogovorimo za lokacijo prevzema in vam pošljemo vse podrobnosti.',
+        title: 'Potrdimo in uredimo vse',
+        description: 'Po prejemu akontacije potrdimo rezervacijo in vam pošljemo vse informacije.',
       },
       {
         step: 3,
-        title: 'Prevzamete & uživate',
-        description: 'Podpišete pogodbo, prejmete navodila in ste na poti. Jet ski vrnete na isto lokacijo.',
+        title: 'Prevzamete in uživate',
+        description: 'Prevzem v Ljubljani, priklopite in že ste na poti proti morju.',
       },
     ],
   },
 
   pricingPreview: {
     label: 'Cenik',
-    title: 'Transparentne cene, brez presenečenj',
-    subtitle: 'Izberite paket, ki ustreza vašemu dopustu. Prikolica in dokumentacija sta vedno vključeni.',
+    title: 'Jasne cene. Brez presenečenj.',
+    subtitle: 'Plačate točno to, kar vidite. Prikolica in dokumentacija sta vedno vključeni.',
     ctaText: 'Celoten cenik in podrobnosti',
+    urgencyNote: '⚠️ Najboljši termini v visoki sezoni so hitro razprodani.',
   },
 
   faqPreview: {
@@ -97,10 +99,11 @@ export const homeContent = {
   },
 
   contactCTA: {
-    title: 'Vaš termin čaka',
-    subtitle: 'Priljubljeni datumi se hitro zapolnijo. Pošljite povpraševanje brez obveznosti — odgovorimo v 24 urah.',
+    title: 'Rezervirajte svoj termin, preden ga nekdo drug.',
+    subtitle: 'Najbolj priljubljeni datumi se zapolnijo prvi. Pošljite rezervacijo danes in si zagotovite brezskrben dopust.',
     ctaText: 'Rezerviraj termin',
     secondaryCTA: 'Pokliči nas',
+    phone: '+386 40 698 807',
     urgencyNote: 'Brezplačno povpraševanje • Brez obveznosti • Odziv v 24h',
   },
 }
