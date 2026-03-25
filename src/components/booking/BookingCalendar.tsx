@@ -421,8 +421,12 @@ export default function BookingCalendar({ onSelect, initialRange }: BookingCalen
                 {content.legend.pending}
               </span>
               <span className="flex items-center gap-2 text-xs text-gray-500">
-                <span className="w-3 h-3 rounded-full bg-gray-300" />
+                <span className="w-3 h-3 rounded-full bg-gray-800" />
                 {content.legend.available}
+              </span>
+              <span className="flex items-center gap-2 text-xs text-gray-500">
+                <span className="w-3 h-3 rounded-full bg-gray-300" />
+                {content.legend.blocked}
               </span>
             </div>
           </div>

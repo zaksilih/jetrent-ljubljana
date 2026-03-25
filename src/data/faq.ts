@@ -26,16 +26,16 @@ export const faqItems: FAQItem[] = [
     category: 'requirements',
   },
   {
-    id: 'weekend-rental',
-    question: 'Ali lahko najamem jet ski samo za vikend?',
-    answer: 'Da, vikend najem je možen glede na razpoložljivost. Petek popoldan – nedelja popoldan. Cena: 90 €/dan.',
-    category: 'rental',
-  },
-  {
     id: 'boat-license',
     question: 'Ali potrebujem dovoljenje za voditelja čolna?',
     answer: 'Da, obvezno. Za upravljanje jet skija na Hrvaškem potrebujete veljavno dovoljenje za voditelja čolna. Več informacij lahko preverite na mmpi.gov.hr. Ob prevzemu morate pokazati veljavno dovoljenje.',
     category: 'requirements',
+  },
+  {
+    id: 'weekend-rental',
+    question: 'Ali lahko najamem jet ski samo za vikend?',
+    answer: 'Da, vikend najem je možen glede na razpoložljivost. Petek popoldan – nedelja popoldan. Cena: 90 €/dan.',
+    category: 'rental',
   },
   {
     id: 'weekly-rental',

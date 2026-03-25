@@ -179,8 +179,8 @@ export const howItWorksContent = {
   steps: [
     {
       step: 1,
-      title: 'Oddaja povpraševanja',
-      description: 'Izpolnite obrazec na naši spletni strani ali nas kontaktirajte po telefonu. Navedite želeni datum najema, trajanje in destinacijo uporabe. Odgovorili vam bomo v najkrajšem možnem času.',
+      title: 'Oddaja povpraševanja ali rezervacija',
+      description: 'Rezervirajte vaš termin preko rezervacijskega sistema na spletni strani, izpolnite kontaktni obrazec ali nas kontaktirajte po telefonu. Navedite želeni datum najema, trajanje in destinacijo uporabe. Odgovorili vam bomo v najkrajšem možnem času.',
       icon: 'Send',
     },
     {
@@ -220,7 +220,12 @@ export const howItWorksContent = {
       },
       {
         title: 'Dokumenti za vleko',
-        description: 'Preverite, ali vaše vozniško dovoljenje omogoča vleko prikolice te teže. Po potrebi pridobite dovoljenje za tretjo tablico.',
+        description: 'Preverite, ali vaše vozniško dovoljenje omogoča vleko prikolice te teže. Po potrebi pridobite tretjo registrsko tablico.',
+        required: true,
+      },
+      {
+        title: 'Veljavno dovoljenje za voditelja čolna',
+        description: 'Stranka mora imeti veljavno dovoljenje za voditelja čolna, ki je obvezno za upravljanje jet skija na Hrvaškem. Preverite pogoje na www.mmpi.gov.hr.',
         required: true,
       },
       {

@@ -85,7 +85,7 @@ export function PricingPreview() {
 
               <CardFooter>
                 <Button asChild variant={tier.isRecommended ? 'cta' : 'secondary'} className="w-full">
-                  <Link href="/rezervacija">Povpraševanje</Link>
+                  <Link href="/rezervacija">Rezervacija</Link>
                 </Button>
               </CardFooter>
             </Card>
