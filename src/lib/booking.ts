@@ -376,10 +376,10 @@ export function validateCustomerForm(data: CustomerFormData): CustomerFormErrors
 // ── Bank transfer info ───────────────────────────────────────
 
 export const bankDetails = {
-  accountHolder: 'Jet4You d.o.o.',
-  bank: 'NLB d.d.',
-  iban: 'SI56 0000 0000 0000 000', // Replace with real IBAN
-  swift: 'LJBASI2X',
+  accountHolder: 'Žak Šilih',
+  bank: 'Gorenjska banka',
+  iban: 'SI56 0766 5721 3615 102',
+  swift: 'GORESI2X',
   purpose: 'Polog za najem jet skija',
 }
 

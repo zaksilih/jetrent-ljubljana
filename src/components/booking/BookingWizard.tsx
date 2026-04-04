@@ -143,13 +143,13 @@ export default function BookingWizard() {
     <div className="space-y-10">
       {/* Step indicator */}
       {step < 6 && (
-        <div className="flex items-center justify-center gap-1 sm:gap-2">
+        <div className="flex items-center justify-between max-w-lg mx-auto">
           {steps.map((s) => (
-            <div key={s.number} className="flex items-center">
+            <div key={s.number} className="flex items-center flex-1 last:flex-none">
               <div className="flex flex-col items-center">
                 <div
                   className={cn(
-                    'w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-sm font-semibold transition-all',
+                    'w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-xs sm:text-sm font-semibold transition-all',
                     s.number < step
                       ? 'bg-primary-500 text-white'
                       : s.number === step
@@ -157,11 +157,11 @@ export default function BookingWizard() {
                         : 'bg-gray-100 text-gray-400'
                   )}
                 >
-                  {s.number < step ? <Check className="w-4 h-4" /> : s.number}
+                  {s.number < step ? <Check className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : s.number}
                 </div>
                 <span
                   className={cn(
-                    'text-[10px] sm:text-xs mt-1 font-medium',
+                    'text-[9px] sm:text-xs mt-1 font-medium',
                     s.number <= step ? 'text-primary-600' : 'text-gray-400'
                   )}
                 >
@@ -171,7 +171,7 @@ export default function BookingWizard() {
               {s.number < steps.length && (
                 <div
                   className={cn(
-                    'w-6 sm:w-10 h-0.5 mx-1 rounded-full mb-5',
+                    'flex-1 h-0.5 mx-1 sm:mx-2 rounded-full mb-5 min-w-2',
                     s.number < step ? 'bg-primary-400' : 'bg-gray-200'
                   )}
                 />
