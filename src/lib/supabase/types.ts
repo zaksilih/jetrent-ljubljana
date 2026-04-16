@@ -25,6 +25,9 @@ export type BlockedDateInsert = Database['public']['Tables']['blocked_dates']['I
 export type PricingRule = Database['public']['Tables']['pricing_rules']['Row']
 export type PricingRuleInsert = Database['public']['Tables']['pricing_rules']['Insert']
 
+export type Inquiry = Database['public']['Tables']['inquiries']['Row']
+export type InquiryInsert = Database['public']['Tables']['inquiries']['Insert']
+
 export type PricingRuleType = Database['public']['Enums']['pricing_rule_type']
 
 // ── Database interface for Supabase client ───────────────────
@@ -330,6 +333,45 @@ export type Database = {
           key?: string
           value?: Record<string, unknown>
           updated_at?: string
+        }
+        Relationships: []
+      }
+      inquiries: {
+        Row: {
+          id: string
+          name: string
+          email: string
+          phone: string
+          date_from: string | null
+          date_to: string | null
+          destination: string | null
+          has_tow_hitch: boolean | null
+          message: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          email: string
+          phone: string
+          date_from?: string | null
+          date_to?: string | null
+          destination?: string | null
+          has_tow_hitch?: boolean | null
+          message?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          name?: string
+          email?: string
+          phone?: string
+          date_from?: string | null
+          date_to?: string | null
+          destination?: string | null
+          has_tow_hitch?: boolean | null
+          message?: string | null
+          created_at?: string
         }
         Relationships: []
       }

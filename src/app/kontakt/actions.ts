@@ -1,5 +1,8 @@
 'use server'
 
+import { Resend } from 'resend'
+import { createServerClient } from '@/lib/supabase/server'
+
 // Types for form data
 export interface InquiryFormData {
   name: string
@@ -53,19 +56,6 @@ function validateFormData(data: InquiryFormData): InquiryFormState['errors'] {
   return Object.keys(errors).length > 0 ? errors : undefined
 }
 
-/**
- * Server action to handle inquiry form submission.
- * 
- * Currently logs the data. In production, this would:
- * 1. Save to Supabase database
- * 2. Send confirmation email
- * 3. Notify business owner
- * 
- * TODO: Connect to Supabase when ready:
- * - Create 'inquiries' table
- * - Use supabase client to insert data
- * - Add email notification service
- */
 export async function submitInquiry(
   _prevState: InquiryFormState | null,
   formData: FormData
@@ -93,44 +83,51 @@ export async function submitInquiry(
   }
 
   try {
-    // Simulate async operation
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // Log the inquiry (in production, save to database)
-    console.log('=== Nova poizvedba ===')
-    console.log('Ime:', data.name)
-    console.log('E-pošta:', data.email)
-    console.log('Telefon:', data.phone)
-    console.log('Termin:', `${data.dateFrom} - ${data.dateTo}`)
-    console.log('Destinacija:', data.destination || 'Ni navedeno')
-    console.log('Kljuka:', data.hasTowHitch === 'yes' ? 'Da' : 'Ne')
-    console.log('Sporočilo:', data.message || 'Ni sporočila')
-    console.log('======================')
-
-    /* 
-    // SUPABASE INTEGRATION (uncomment when ready):
-    
-    import { createClient } from '@supabase/supabase-js'
-    
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
-    
-    const { error } = await supabase.from('inquiries').insert({
+    // 1. Save to Supabase
+    const supabase = createServerClient()
+    const { error: dbError } = await supabase.from('inquiries').insert({
       name: data.name,
       email: data.email,
       phone: data.phone,
-      date_from: data.dateFrom,
-      date_to: data.dateTo,
-      destination: data.destination,
-      has_tow_hitch: data.hasTowHitch === 'yes',
-      message: data.message,
-      created_at: new Date().toISOString(),
+      date_from: data.dateFrom || null,
+      date_to: data.dateTo || null,
+      destination: data.destination || null,
+      has_tow_hitch: data.hasTowHitch === 'yes' ? true : data.hasTowHitch === 'no' ? false : null,
+      message: data.message || null,
     })
-    
-    if (error) throw error
-    */
+
+    if (dbError) {
+      console.error('Supabase insert error:', dbError)
+      throw new Error('Database error')
+    }
+
+    // 2. Send email notification
+    const resendKey = process.env.RESEND_API_KEY
+    if (resendKey) {
+      const resend = new Resend(resendKey)
+      const notifyEmail = process.env.NOTIFY_EMAIL || 'info@jet4you.com'
+
+      await resend.emails.send({
+        from: 'Jet4You <onboarding@resend.dev>',
+        to: notifyEmail,
+        subject: `Novo povpraševanje: ${data.name}`,
+        html: `
+          <h2>Novo povpraševanje s kontaktnega obrazca</h2>
+          <table style="border-collapse:collapse;width:100%;max-width:500px">
+            <tr><td style="padding:8px;font-weight:bold">Ime:</td><td style="padding:8px">${escapeHtml(data.name)}</td></tr>
+            <tr><td style="padding:8px;font-weight:bold">E-pošta:</td><td style="padding:8px">${escapeHtml(data.email)}</td></tr>
+            <tr><td style="padding:8px;font-weight:bold">Telefon:</td><td style="padding:8px">${escapeHtml(data.phone)}</td></tr>
+            <tr><td style="padding:8px;font-weight:bold">Termin:</td><td style="padding:8px">${escapeHtml(data.dateFrom)} – ${escapeHtml(data.dateTo)}</td></tr>
+            <tr><td style="padding:8px;font-weight:bold">Destinacija:</td><td style="padding:8px">${escapeHtml(data.destination || 'Ni navedeno')}</td></tr>
+            <tr><td style="padding:8px;font-weight:bold">Kljuka:</td><td style="padding:8px">${data.hasTowHitch === 'yes' ? 'Da' : 'Ne'}</td></tr>
+            ${data.message ? `<tr><td style="padding:8px;font-weight:bold">Sporočilo:</td><td style="padding:8px">${escapeHtml(data.message)}</td></tr>` : ''}
+          </table>
+        `,
+      }).catch((emailErr) => {
+        // Don't fail the whole submission if email fails
+        console.error('Resend email error:', emailErr)
+      })
+    }
 
     return {
       success: true,
@@ -143,4 +140,12 @@ export async function submitInquiry(
       message: 'Prišlo je do napake. Prosimo, poskusite ponovno ali nas kontaktirajte po telefonu.',
     }
   }
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
 }
