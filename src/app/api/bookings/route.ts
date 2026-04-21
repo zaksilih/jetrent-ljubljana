@@ -167,8 +167,19 @@ export async function POST(req: NextRequest) {
         body: JSON.stringify({
           type: 'booking_created',
           bookingId: booking.id,
-          email: customer.email,
+          email: customer.email.toLowerCase().trim(),
           reference: booking.reference,
+          customerName: `${customer.firstName} ${customer.lastName}`,
+          startDate,
+          endDate,
+          numDays: price.numDays,
+          jetskiName: jetski.name,
+          totalPrice: price.totalPrice,
+          depositAmount: price.depositAmount,
+          rateSegments: price.rateSegments,
+          deliveryFee: price.deliveryFee,
+          deliveryKm: price.deliveryKm,
+          securityDeposit: price.securityDeposit,
         }),
       })
     } catch {

@@ -76,66 +76,66 @@ export default function BookingWizard() {
     [dateRange]
   )
 
-  // Step 4: Customer form submitted, recalculate with delivery
+  // Step 4: Customer form submitted, recalculate with delivery, create booking
   const handleCustomerSubmit = useCallback(
     async (data: CustomerFormData) => {
       setCustomerData(data)
-      if (dateRange && selectedJetSki) {
-        try {
-          const startStr = formatDateISO(dateRange.start)
-          const endStr = formatDateISO(dateRange.end)
-          const km = data.deliveryKm || 0
-          const res = await fetch(
-            `/api/pricing/calculate?start=${startStr}&end=${endStr}&jetskiId=${selectedJetSki.id}&deliveryKm=${km}`
-          )
-          if (res.ok) {
-            const d = await res.json()
-            setPrice(d.price)
-          }
-        } catch (err) {
-          console.error('Failed to recalculate price:', err)
+      if (!dateRange || !selectedJetSki) return
+
+      try {
+        // Recalculate price with delivery
+        const startStr = formatDateISO(dateRange.start)
+        const endStr = formatDateISO(dateRange.end)
+        const km = data.deliveryKm || 0
+        const priceRes = await fetch(
+          `/api/pricing/calculate?start=${startStr}&end=${endStr}&jetskiId=${selectedJetSki.id}&deliveryKm=${km}`
+        )
+        if (priceRes.ok) {
+          const d = await priceRes.json()
+          setPrice(d.price)
         }
+
+        // Create booking immediately to get reference for payment step
+        const bookingRes = await fetch('/api/bookings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            jetskiId: selectedJetSki.id,
+            startDate: startStr,
+            endDate: endStr,
+            customer: {
+              firstName: data.firstName,
+              lastName: data.lastName,
+              email: data.email,
+              phone: data.phone,
+              country: data.country,
+            },
+            pickupLocation: data.pickupLocation || null,
+            customerMessage: data.message || null,
+            deliveryKm: km,
+          }),
+        })
+
+        if (!bookingRes.ok) {
+          const err = await bookingRes.json()
+          throw new Error(err.error || 'Napaka pri ustvarjanju rezervacije.')
+        }
+
+        const result = await bookingRes.json()
+        setBookingReference(result.reference)
+      } catch (err) {
+        console.error('Failed to create booking:', err)
       }
+
       setStep(5)
     },
     [dateRange, selectedJetSki]
   )
 
-  // Step 5 → 6: Confirm booking via API
+  // Step 5 → 6: Just advance (booking already created)
   const handleConfirmBooking = useCallback(async () => {
-    if (!dateRange || !selectedJetSki || !customerData || !price) {
-      throw new Error('Manjkajo podatki za rezervacijo.')
-    }
-
-    const res = await fetch('/api/bookings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        jetskiId: selectedJetSki.id,
-        startDate: formatDateISO(dateRange.start),
-        endDate: formatDateISO(dateRange.end),
-        customer: {
-          firstName: customerData.firstName,
-          lastName: customerData.lastName,
-          email: customerData.email,
-          phone: customerData.phone,
-          country: customerData.country,
-        },
-        pickupLocation: customerData.pickupLocation || null,
-        customerMessage: customerData.message || null,
-        deliveryKm: customerData.deliveryKm || 0,
-      }),
-    })
-
-    if (!res.ok) {
-      const err = await res.json()
-      throw new Error(err.error || 'Napaka pri ustvarjanju rezervacije.')
-    }
-
-    const result = await res.json()
-    setBookingReference(result.reference)
     setStep(6)
-  }, [dateRange, selectedJetSki, customerData, price])
+  }, [])
 
   const steps = bookingContent.steps
 
@@ -221,6 +221,7 @@ export default function BookingWizard() {
       {step === 5 && price && (
         <PaymentStep
           price={price}
+          reference={bookingReference}
           onConfirm={handleConfirmBooking}
         />
       )}

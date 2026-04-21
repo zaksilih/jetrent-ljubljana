@@ -10,10 +10,11 @@ import type { PriceBreakdown } from '@/lib/booking'
 
 interface PaymentStepProps {
   price: PriceBreakdown
+  reference: string
   onConfirm: () => Promise<void>
 }
 
-export default function PaymentStep({ price, onConfirm }: PaymentStepProps) {
+export default function PaymentStep({ price, reference, onConfirm }: PaymentStepProps) {
   const content = bookingContent.payment
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -62,6 +63,12 @@ export default function PaymentStep({ price, onConfirm }: PaymentStepProps) {
               <span className="text-gray-500">{content.swift}</span>
               <span className="font-mono font-medium text-gray-900">{bankDetails.swift}</span>
             </div>
+            {reference && (
+              <div className="flex justify-between">
+                <span className="text-gray-500">{content.reference}</span>
+                <span className="font-mono font-semibold text-gray-900">{reference}</span>
+              </div>
+            )}
             <div className="border-t border-gray-200 pt-3 mt-3">
               <div className="flex justify-between">
                 <span className="text-gray-700 font-medium">{content.amount}</span>
