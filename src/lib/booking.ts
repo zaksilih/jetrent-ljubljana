@@ -84,9 +84,16 @@ export function validateBookingDates(
 
 // ── Pricing calculation ──────────────────────────────────────
 
+export interface RateSegment {
+  days: number
+  rate: number
+  label: string   // e.g. 'Visoka sezona' or rule name
+}
+
 export interface PriceBreakdown {
   numDays: number
   dailyRate: number
+  rateSegments: RateSegment[]
   rentalTotal: number
   deliveryKm: number
   deliveryFee: number
@@ -165,6 +172,7 @@ export function calculatePrice(
   return {
     numDays,
     dailyRate,
+    rateSegments: [],
     rentalTotal,
     deliveryKm,
     deliveryFee,
@@ -279,6 +287,18 @@ export function calculatePriceWithRules(
   }
 
   const avgDailyRate = numDays > 0 ? Math.round((rentalTotal / numDays) * 100) / 100 : 0
+
+  // Build rate segments: group consecutive days with the same rate
+  const rateSegments: RateSegment[] = []
+  for (const dr of dailyRates) {
+    const last = rateSegments[rateSegments.length - 1]
+    if (last && last.rate === dr.rate && last.label === dr.source) {
+      last.days += 1
+    } else {
+      rateSegments.push({ days: 1, rate: dr.rate, label: dr.source })
+    }
+  }
+
   const deliveryFee = Math.round(deliveryKm * DELIVERY_RATE_PER_KM * 100) / 100
   const totalPrice = rentalTotal + deliveryFee
   const depositAmount = Math.ceil(rentalTotal * DEPOSIT_PERCENTAGE)
@@ -288,6 +308,7 @@ export function calculatePriceWithRules(
     numDays,
     dailyRate: avgDailyRate,
     dailyRates,
+    rateSegments,
     rentalTotal,
     deliveryKm,
     deliveryFee,

@@ -80,13 +80,24 @@ export default function BookingSummary({
 
           {expanded && (
             <div className="px-6 pb-6 space-y-3 text-sm animate-in slide-in-from-top-2 duration-200">
-              {/* Rental breakdown */}
-              <div className="flex justify-between">
-                <span className="text-gray-500">
-                  {content.rental}: {price.numDays} {content.days} × {formatEUR(price.dailyRate)}
-                </span>
-                <span className="font-medium text-gray-900">{formatEUR(price.rentalTotal)}</span>
-              </div>
+              {/* Rental breakdown — segmented if mixed rates */}
+              {price.rateSegments && price.rateSegments.length > 1 ? (
+                price.rateSegments.map((seg, i) => (
+                  <div key={i} className="flex justify-between">
+                    <span className="text-gray-500">
+                      {content.rental}: {seg.days} {content.days} × {formatEUR(seg.rate)}
+                    </span>
+                    <span className="font-medium text-gray-900">{formatEUR(seg.days * seg.rate)}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="flex justify-between">
+                  <span className="text-gray-500">
+                    {content.rental}: {price.numDays} {content.days} × {formatEUR(price.dailyRate)}
+                  </span>
+                  <span className="font-medium text-gray-900">{formatEUR(price.rentalTotal)}</span>
+                </div>
+              )}
 
               {/* Delivery */}
               {price.deliveryFee > 0 && (

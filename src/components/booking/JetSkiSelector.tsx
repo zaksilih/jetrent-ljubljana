@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { bookingContent } from '@/data/booking'
 import { formatEUR, getSeasonForDate, getDailyRate } from '@/lib/booking'
+import { eachDayOfInterval, addDays } from 'date-fns'
 import type { JetSki } from '@/lib/supabase'
 import { cn } from '@/lib/utils'
 import { Check } from 'lucide-react'
@@ -43,12 +44,22 @@ export default function JetSkiSelector({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         {jetskis.map((js) => {
           const isSelected = selected?.id === js.id
-          const season = getSeasonForDate(dateRange.start, dateRange.start.getFullYear())
-          const dailyRate = getDailyRate(season, {
+          const prices = {
             low: Number(js.daily_price_low),
             high: Number(js.daily_price_high),
             short: Number(js.daily_price_short),
+          }
+
+          // Compute unique rates across all days in the range
+          const rentalDays = eachDayOfInterval({
+            start: dateRange.start,
+            end: addDays(dateRange.end, -1),
           })
+          const ratesArr = rentalDays.map((d) => getDailyRate(getSeasonForDate(d, d.getFullYear()), prices))
+          const uniqueRates = Array.from(new Set(ratesArr))
+          const minRate = Math.min(...uniqueRates)
+          const maxRate = Math.max(...uniqueRates)
+          const isMixed = uniqueRates.length > 1
 
           return (
             <div
@@ -86,10 +97,21 @@ export default function JetSkiSelector({
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-2xl font-bold text-primary-600">
-                      {formatEUR(dailyRate)}
-                    </span>
-                    <span className="text-sm text-gray-400 ml-1">{content.perDay}</span>
+                    {isMixed ? (
+                      <>
+                        <span className="text-2xl font-bold text-primary-600">
+                          {formatEUR(minRate)} – {formatEUR(maxRate)}
+                        </span>
+                        <span className="text-sm text-gray-400 ml-1">{content.perDay}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-2xl font-bold text-primary-600">
+                          {formatEUR(minRate)}
+                        </span>
+                        <span className="text-sm text-gray-400 ml-1">{content.perDay}</span>
+                      </>
+                    )}
                   </div>
 
                   <Button

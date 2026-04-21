@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@/lib/supabase/server'
-import { calculatePriceWithRules, type PriceBreakdown } from '@/lib/booking'
+import { calculatePriceWithRules } from '@/lib/booking'
 import { parseISO, differenceInDays } from 'date-fns'
 
 /**
@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
     .gte('end_date', start)
     .order('priority', { ascending: false })
 
-  const price: PriceBreakdown = calculatePriceWithRules(
+  const result = calculatePriceWithRules(
     startDate,
     endDate,
     {
@@ -64,6 +64,9 @@ export async function GET(req: NextRequest) {
     rules || [],
     deliveryKm
   )
+
+  // Return PriceBreakdown with rateSegments (strip verbose dailyRates array)
+  const { dailyRates: _dr, ...price } = result
 
   return NextResponse.json({ price })
 }
